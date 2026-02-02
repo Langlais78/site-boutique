@@ -24,11 +24,24 @@ export default function Register() {
 
     return (
         <GuestLayout>
-            <Head title="Register" />
+            <Head title="Inscription" />
 
             <form onSubmit={submit}>
+                <div className="mb-6 space-y-2 text-center">
+                    <p className="text-xs font-semibold uppercase tracking-[0.35em] text-black/50">
+                        Inscription
+                    </p>
+                    <h1 className="font-['Fraunces'] text-3xl font-semibold text-[var(--ink)]">
+                        Rejoignez la boutique.
+                    </h1>
+                    <p className="text-sm text-black/60">
+                        Creez votre espace client pour suivre vos commandes et
+                        acceder aux capsules privees.
+                    </p>
+                </div>
+
                 <div>
-                    <InputLabel htmlFor="name" value="Name" />
+                    <InputLabel htmlFor="name" value="Nom complet" />
 
                     <TextInput
                         id="name"
@@ -62,7 +75,7 @@ export default function Register() {
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
+                    <InputLabel htmlFor="password" value="Mot de passe" />
 
                     <TextInput
                         id="password"
@@ -81,7 +94,7 @@ export default function Register() {
                 <div className="mt-4">
                     <InputLabel
                         htmlFor="password_confirmation"
-                        value="Confirm Password"
+                        value="Confirmer le mot de passe"
                     />
 
                     <TextInput
@@ -106,13 +119,13 @@ export default function Register() {
                 <div className="mt-4 flex items-center justify-end">
                     <Link
                         href={route('login')}
-                        className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        className="text-sm text-black/60 underline hover:text-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2"
                     >
-                        Already registered?
+                        Deja un compte ?
                     </Link>
 
                     <PrimaryButton className="ms-4" disabled={processing}>
-                        Register
+                        Creer mon compte
                     </PrimaryButton>
                 </div>
             </form>

@@ -12,30 +12,33 @@ export default function Edit({
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Profile
-                </h2>
+                <div className="space-y-2">
+                    <p className="text-xs font-semibold uppercase tracking-[0.35em] text-black/50">
+                        Compte
+                    </p>
+                    <h2 className="font-['Fraunces'] text-3xl font-semibold text-[var(--ink)]">
+                        Mon compte
+                    </h2>
+                </div>
             }
         >
-            <Head title="Profile" />
+            <Head title="Mon compte" />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <UpdateProfileInformationForm
-                            mustVerifyEmail={mustVerifyEmail}
-                            status={status}
-                            className="max-w-xl"
-                        />
-                    </div>
+            <div className="mt-10 space-y-6">
+                <div className="rounded-[28px] border border-black/10 bg-white p-6 shadow-[0_20px_50px_rgba(23,20,16,0.08)]">
+                    <UpdateProfileInformationForm
+                        mustVerifyEmail={mustVerifyEmail}
+                        status={status}
+                        className="max-w-xl"
+                    />
+                </div>
 
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <UpdatePasswordForm className="max-w-xl" />
-                    </div>
+                <div className="rounded-[28px] border border-black/10 bg-white p-6 shadow-[0_20px_50px_rgba(23,20,16,0.08)]">
+                    <UpdatePasswordForm className="max-w-xl" />
+                </div>
 
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <DeleteUserForm className="max-w-xl" />
-                    </div>
+                <div className="rounded-[28px] border border-black/10 bg-white p-6 shadow-[0_20px_50px_rgba(23,20,16,0.08)]">
+                    <DeleteUserForm className="max-w-xl" />
                 </div>
             </div>
         </AuthenticatedLayout>
