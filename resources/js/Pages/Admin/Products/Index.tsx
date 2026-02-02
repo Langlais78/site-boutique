@@ -1,4 +1,4 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import { PageProps, Product } from '@/types';
 
@@ -29,7 +29,7 @@ export default function Index({ products = [] }: PageProps<Props>) {
     };
 
     return (
-        <AuthenticatedLayout
+        <AdminLayout
             header={
                 <div className="space-y-2">
                     <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[var(--muted)]">
@@ -110,6 +110,6 @@ export default function Index({ products = [] }: PageProps<Props>) {
                     ))
                 )}
             </div>
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 }

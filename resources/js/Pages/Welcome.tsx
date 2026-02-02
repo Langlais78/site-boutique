@@ -10,6 +10,8 @@ export default function Welcome({
             style: 'currency',
             currency: product.currency || 'EUR',
         }).format((product.price_cents || 0) / 100);
+    const getImage = (product: Product) =>
+        product.image || product.images?.[0] || '';
 
     return (
         <AuthenticatedLayout>
@@ -169,8 +171,19 @@ export default function Welcome({
                                 </div>
                                 <Link
                                     href={route('product.show', product.slug)}
-                                    className="mt-6 block h-28 rounded-2xl bg-[linear-gradient(135deg,rgba(38,244,208,0.18),rgba(255,138,61,0.2))]"
-                                ></Link>
+                                    className="mt-6 block h-28 overflow-hidden rounded-2xl border border-white/10 bg-[var(--surface-2)]"
+                                >
+                                    {getImage(product) ? (
+                                        <img
+                                            src={getImage(product)}
+                                            alt={product.name}
+                                            className="h-full w-full object-cover"
+                                            loading="lazy"
+                                        />
+                                    ) : (
+                                        <div className="h-full w-full bg-[linear-gradient(135deg,rgba(38,244,208,0.18),rgba(255,138,61,0.2))]" />
+                                    )}
+                                </Link>
                                 <Link
                                     href={route('product.show', product.slug)}
                                     className="mt-4 block text-lg font-semibold text-[var(--ink)] hover:text-[var(--accent)]"

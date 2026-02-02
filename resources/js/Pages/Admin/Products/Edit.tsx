@@ -1,4 +1,4 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
 import { PageProps, Product } from '@/types';
 import ProductForm from './Form';
@@ -24,7 +24,7 @@ export default function Edit({
     product,
 }: PageProps<{ product: ProductFormValues }>) {
     return (
-        <AuthenticatedLayout
+        <AdminLayout
             header={
                 <div className="space-y-2">
                     <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[var(--muted)]">
@@ -43,6 +43,9 @@ export default function Edit({
                     submitLabel="Enregistrer"
                     action={route('admin.products.update', product.id)}
                     method="put"
+                    updateAction={route('admin.products.update.post', product.id)}
+                    initialImage={product.image ?? null}
+                    initialImages={product.images ?? []}
                     initialValues={{
                         name: product.name ?? '',
                         slug: product.slug ?? '',
@@ -74,6 +77,6 @@ export default function Edit({
                     }}
                 />
             </div>
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 }

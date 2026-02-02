@@ -1,10 +1,10 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
 import ProductForm from './Form';
 
 export default function Create() {
     return (
-        <AuthenticatedLayout
+        <AdminLayout
             header={
                 <div className="space-y-2">
                     <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[var(--muted)]">
@@ -24,6 +24,6 @@ export default function Create() {
                     action={route('admin.products.store')}
                 />
             </div>
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 }

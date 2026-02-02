@@ -57,6 +57,7 @@ class ProductController extends Controller
                 'specs' => $product->specs ?? [],
                 'category' => $product->category,
                 'brand' => $product->brand,
+                'image' => $product->image,
                 'stock' => $product->stock,
                 'images' => $product->images ?? [],
                 'tags' => $product->tags ?? [],

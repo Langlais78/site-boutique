@@ -106,6 +106,42 @@ class AdminProductController extends Controller
     {
         $validated = $request->validated();
 
+        if ($product) {
+            $defaults = [
+                'name' => $product->name,
+                'sku' => $product->sku,
+                'price' => $this->formatPrice($product->price_cents),
+                'sale_price' => $product->sale_price_cents !== null
+                    ? $this->formatPrice($product->sale_price_cents)
+                    : null,
+                'currency' => $product->currency,
+                'badge' => $product->badge,
+                'color' => $product->color,
+                'summary' => $product->summary,
+                'short_description' => $product->short_description,
+                'description' => $product->description,
+                'specs' => $product->specs ? implode("\n", $product->specs) : null,
+                'tags' => $product->tags ? implode("\n", $product->tags) : null,
+                'variants' => $product->variants ? implode("\n", $product->variants) : null,
+                'category' => $product->category,
+                'brand' => $product->brand,
+                'stock' => $product->stock,
+                'weight_grams' => $product->weight_grams,
+                'dimensions_length' => $product->dimensions['length'] ?? null,
+                'dimensions_width' => $product->dimensions['width'] ?? null,
+                'dimensions_height' => $product->dimensions['height'] ?? null,
+                'dimensions_unit' => $product->dimensions['unit'] ?? null,
+                'is_active' => $product->is_active,
+                'is_featured' => $product->is_featured,
+            ];
+
+            foreach ($defaults as $key => $value) {
+                if (!array_key_exists($key, $validated)) {
+                    $validated[$key] = $value;
+                }
+            }
+        }
+
         $slug = $validated['slug'] ?? '';
         if ($slug === '') {
             $slug = Str::slug($validated['name']);
@@ -144,9 +180,11 @@ class AdminProductController extends Controller
             'slug' => $slug,
             'sku' => $validated['sku'] ?? null,
             'price_cents' => $this->priceToCents($validated['price']),
-            'sale_price_cents' => $validated['sale_price'] !== null
-                ? $this->priceToCents($validated['sale_price'])
-                : null,
+            'sale_price_cents' => array_key_exists('sale_price', $validated)
+                ? ($validated['sale_price'] !== null && $validated['sale_price'] !== ''
+                    ? $this->priceToCents($validated['sale_price'])
+                    : null)
+                : $product?->sale_price_cents,
             'currency' => $validated['currency'] ?? 'EUR',
             'badge' => $validated['badge'] ?? null,
             'color' => $validated['color'] ?? null,

@@ -13,11 +13,13 @@ class AdminProductRequest extends FormRequest
 
     public function rules(): array
     {
+        $isCreate = $this->routeIs('admin.products.store');
+
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => [$isCreate ? 'required' : 'sometimes', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255'],
             'sku' => ['nullable', 'string', 'max:255'],
-            'price' => ['required', 'numeric', 'min:0'],
+            'price' => [$isCreate ? 'required' : 'sometimes', 'numeric', 'min:0'],
             'sale_price' => ['nullable', 'numeric', 'min:0'],
             'currency' => ['nullable', 'string', 'size:3'],
             'badge' => ['nullable', 'string', 'max:255'],
@@ -42,5 +44,28 @@ class AdminProductRequest extends FormRequest
             'is_active' => ['nullable', 'boolean'],
             'is_featured' => ['nullable', 'boolean'],
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $nullableFields = [
+            'sale_price',
+            'stock',
+            'weight_grams',
+            'dimensions_length',
+            'dimensions_width',
+            'dimensions_height',
+        ];
+
+        $data = [];
+        foreach ($nullableFields as $field) {
+            if ($this->has($field) && $this->input($field) === '') {
+                $data[$field] = null;
+            }
+        }
+
+        if (!empty($data)) {
+            $this->merge($data);
+        }
     }
 }

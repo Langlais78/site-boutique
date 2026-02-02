@@ -26,6 +26,8 @@ class HomeController extends Controller
                 'currency',
                 'badge',
                 'color',
+                'image',
+                'images',
             ]);
 
         return Inertia::render('Welcome', [

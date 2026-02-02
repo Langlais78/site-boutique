@@ -38,14 +38,20 @@ type Props = {
     submitLabel: string;
     action: string;
     method?: 'post' | 'put';
+    updateAction?: string;
     initialValues?: Partial<ProductFormData>;
+    initialImage?: string | null;
+    initialImages?: string[];
 };
 
 export default function ProductForm({
     submitLabel,
     action,
     method = 'post',
+    updateAction,
     initialValues,
+    initialImage,
+    initialImages = [],
 }: Props) {
     const { data, setData, post, put, processing, errors } = useForm<ProductFormData>({
         name: initialValues?.name ?? '',
@@ -79,7 +85,7 @@ export default function ProductForm({
     const submit = (event: FormEvent) => {
         event.preventDefault();
         if (method === 'put') {
-            put(action, { forceFormData: true });
+            post(updateAction ?? action, { forceFormData: true });
             return;
         }
         post(action, { forceFormData: true });
@@ -382,6 +388,15 @@ export default function ProductForm({
 
             <div>
                 <InputLabel htmlFor="image_file" value="Image principale (upload)" />
+                {initialImage && !data.image_file && (
+                    <div className="mt-3 h-32 w-full overflow-hidden rounded-2xl border border-white/10 bg-[var(--surface-2)]">
+                        <img
+                            src={initialImage}
+                            alt="Image principale"
+                            className="h-full w-full object-cover"
+                        />
+                    </div>
+                )}
                 <input
                     id="image_file"
                     type="file"
@@ -399,6 +414,22 @@ export default function ProductForm({
 
             <div>
                 <InputLabel htmlFor="images_files" value="Galerie (upload multiple)" />
+                {initialImages.length > 0 && data.images_files.length === 0 && (
+                    <div className="mt-3 grid grid-cols-3 gap-3">
+                        {initialImages.map((url) => (
+                            <div
+                                key={url}
+                                className="h-20 overflow-hidden rounded-xl border border-white/10 bg-[var(--surface-2)]"
+                            >
+                                <img
+                                    src={url}
+                                    alt="Galerie"
+                                    className="h-full w-full object-cover"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                )}
                 <input
                     id="images_files"
                     type="file"

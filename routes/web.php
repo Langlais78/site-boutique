@@ -31,6 +31,8 @@ Route::prefix('admin')
     ->group(function () {
         Route::get('/', AdminDashboardController::class)->name('dashboard');
         Route::resource('products', AdminProductController::class)->except(['show']);
+        Route::match(['post'], 'products/{product}', [AdminProductController::class, 'update'])
+            ->name('products.update.post');
     });
 
 Route::middleware('auth')->group(function () {
