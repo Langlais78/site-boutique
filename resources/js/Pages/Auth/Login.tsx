@@ -30,15 +30,27 @@ export default function Login({
 
     return (
         <GuestLayout>
-            <Head title="Log in" />
+            <Head title="Connexion" />
 
             {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
+                <div className="mb-4 text-sm font-medium text-[var(--accent-3)]">
                     {status}
                 </div>
             )}
 
             <form onSubmit={submit}>
+                <div className="mb-6 space-y-2 text-center">
+                    <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[var(--muted)]">
+                        Connexion
+                    </p>
+                    <h1 className="font-['Chakra_Petch'] text-3xl font-semibold text-[var(--ink)]">
+                        Heureux de vous revoir.
+                    </h1>
+                    <p className="text-sm text-[var(--muted)]">
+                        Accedez a vos commandes, presets et favoris.
+                    </p>
+                </div>
+
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
 
@@ -57,7 +69,7 @@ export default function Login({
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
+                    <InputLabel htmlFor="password" value="Mot de passe" />
 
                     <TextInput
                         id="password"
@@ -84,8 +96,8 @@ export default function Login({
                                 )
                             }
                         />
-                        <span className="ms-2 text-sm text-gray-600">
-                            Remember me
+                        <span className="ms-2 text-sm text-[var(--muted)]">
+                            Se souvenir de moi
                         </span>
                     </label>
                 </div>
@@ -94,14 +106,14 @@ export default function Login({
                     {canResetPassword && (
                         <Link
                             href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            className="rounded-md text-sm text-[var(--muted)] underline hover:text-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2"
                         >
-                            Forgot your password?
+                            Mot de passe oublie ?
                         </Link>
                     )}
 
                     <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
+                        Se connecter
                     </PrimaryButton>
                 </div>
             </form>

@@ -1,242 +1,220 @@
 import { PageProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import { CSSProperties } from 'react';
 
 const products = [
     {
-        name: 'Veste Oragee',
-        price: '89€',
-        label: 'Edition limitee',
-        color: 'Ardoise',
-        slug: 'veste-oragee',
+        name: 'Imprimante CoreXY Nova',
+        price: '899€',
+        label: 'Precision',
+        color: 'Noir carbone',
+        slug: 'corexy-nova',
     },
     {
-        name: 'Sac Horizon',
-        price: '69€',
-        label: 'Cuir vegetal',
-        color: 'Sable',
-        slug: 'sac-horizon',
+        name: 'Filament Pro Carbon',
+        price: '39€',
+        label: 'Technique',
+        color: 'Anthracite',
+        slug: 'filament-pro-carbon',
     },
     {
-        name: 'Sneakers Halo',
-        price: '120€',
-        label: 'Stock serre',
-        color: 'Neige',
-        slug: 'sneakers-halo',
+        name: 'Clavier Mecha Flux',
+        price: '149€',
+        label: 'Gaming',
+        color: 'RGB cyan',
+        slug: 'clavier-mecha-flux',
     },
     {
-        name: 'Pull Nocturne',
-        price: '74€',
-        label: 'Laine merinos',
-        color: 'Nuit',
-        slug: 'pull-nocturne',
+        name: 'Souris Vortex',
+        price: '79€',
+        label: 'eSport',
+        color: 'Mat',
+        slug: 'souris-vortex',
     },
     {
-        name: 'Foulard Signal',
-        price: '42€',
-        label: 'Soie recyclee',
-        color: 'Paprika',
-        slug: 'foulard-signal',
+        name: 'Kit Buses 0.2/0.4',
+        price: '24€',
+        label: 'Upgrade',
+        color: 'Titane',
+        slug: 'kit-buses',
     },
     {
-        name: 'Pantalon Eclat',
-        price: '82€',
-        label: 'Coupe droite',
-        color: 'Argile',
-        slug: 'pantalon-eclat',
+        name: 'Casque Pulse',
+        price: '129€',
+        label: 'Audio',
+        color: 'Noir',
+        slug: 'casque-pulse',
     },
 ];
 
 export default function Boutique({ auth }: PageProps) {
-    const styleVars = {
-        '--ink': '#171410',
-        '--paper': '#f7f1e9',
-        '--accent': '#ff6b35',
-        '--accent-2': '#1b998b',
-    } as CSSProperties;
-
     return (
         <>
             <Head title="Boutique" />
-            <div
-                style={styleVars}
-                className="min-h-screen bg-[var(--paper)] text-[var(--ink)]"
-            >
-                <div className="relative overflow-hidden">
-                    <div className="pointer-events-none absolute left-10 top-0 h-48 w-48 rounded-full bg-[radial-gradient(circle_at_center,rgba(255,107,53,0.2),transparent_60%)]"></div>
-                    <div className="pointer-events-none absolute right-0 top-20 h-64 w-64 rounded-full bg-[radial-gradient(circle_at_center,rgba(27,153,139,0.2),transparent_60%)] animate-float-slow"></div>
+            <div className="min-h-screen bg-tech text-[var(--ink)]">
+                <div className="absolute inset-0 bg-grid opacity-70"></div>
 
-                    <header className="relative z-10 mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6">
-                        <div className="flex items-center gap-3 font-['Space_Grotesk'] text-lg font-semibold tracking-wide">
-                            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--ink)] text-[var(--paper)]">
-                                SB
-                            </span>
-                            Studio Boutique
-                        </div>
-                        <nav className="hidden items-center gap-6 text-sm font-medium uppercase tracking-[0.18em] lg:flex">
-                            <Link
-                                href="/"
-                                className="hover:text-[var(--accent)]"
-                            >
-                                Accueil
-                            </Link>
-                            <Link
-                                href={route('boutique')}
-                                className="text-[var(--accent)]"
-                            >
-                                Boutique
-                            </Link>
-                            <span className="h-5 w-px bg-black/20"></span>
-                            {auth.user ? (
-                                <>
-                                    <Link
-                                        href={route('dashboard')}
-                                        className="hover:text-[var(--accent)]"
-                                    >
-                                        Dashboard
-                                    </Link>
-                                    <Link
-                                        href={route('profile.edit')}
-                                        className="hover:text-[var(--accent)]"
-                                    >
-                                        Mon compte
-                                    </Link>
-                                    {auth.user?.is_admin && (
-                                        <Link
-                                            href={route('admin.dashboard')}
-                                            className="hover:text-[var(--accent)]"
-                                        >
-                                            Admin
-                                        </Link>
-                                    )}
-                                </>
-                            ) : (
-                                <>
-                                    <Link
-                                        href={route('login')}
-                                        className="hover:text-[var(--accent)]"
-                                    >
-                                        Connexion
-                                    </Link>
-                                    <Link
-                                        href={route('register')}
-                                        className="rounded-full bg-[var(--ink)] px-5 py-2 text-[var(--paper)] transition hover:bg-[var(--accent)]"
-                                    >
-                                        Inscription
-                                    </Link>
-                                </>
-                            )}
-                        </nav>
-                        <div className="flex items-center gap-3 lg:hidden">
-                            <Link
-                                href="/"
-                                className="rounded-full border border-black/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em]"
-                            >
-                                Accueil
-                            </Link>
-                            {auth.user ? (
+                <header className="relative mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6">
+                    <div className="flex items-center gap-3 font-['Chakra_Petch'] text-sm font-semibold uppercase tracking-[0.3em]">
+                        <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--accent)] text-[var(--bg-0)]">
+                            BS
+                        </span>
+                        Barbu Shop
+                    </div>
+                    <nav className="hidden items-center gap-6 text-xs font-semibold uppercase tracking-[0.22em] lg:flex">
+                        <Link
+                            href="/"
+                            className="text-[var(--muted)] hover:text-[var(--accent)]"
+                        >
+                            Accueil
+                        </Link>
+                        <Link
+                            href={route('boutique')}
+                            className="text-[var(--accent)]"
+                        >
+                            Boutique
+                        </Link>
+                        <span className="h-5 w-px bg-white/10"></span>
+                        {auth.user ? (
+                            <>
                                 <Link
                                     href={route('dashboard')}
-                                    className="rounded-full bg-[var(--ink)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--paper)]"
+                                    className="text-[var(--muted)] hover:text-[var(--accent)]"
                                 >
                                     Dashboard
                                 </Link>
-                            ) : (
-                                <>
-                                    <Link
-                                        href={route('login')}
-                                        className="rounded-full bg-[var(--ink)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--paper)]"
-                                    >
-                                        Connexion
-                                    </Link>
-                                    <Link
-                                        href={route('register')}
-                                        className="rounded-full border border-black/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em]"
-                                    >
-                                        Inscription
-                                    </Link>
-                                </>
-                            )}
-                        </div>
-                    </header>
-
-                    <main className="relative z-10 mx-auto w-full max-w-6xl px-6 pb-20">
-                        <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-                            <div className="space-y-4 font-['Space_Grotesk']">
-                                <p className="animate-fade-up text-xs font-semibold uppercase tracking-[0.35em] text-black/60">
-                                    Boutique
-                                </p>
-                                <h1 className="animate-fade-up-delay-1 font-['Fraunces'] text-4xl font-semibold leading-tight sm:text-5xl">
-                                    Selection soignee pour un vestiaire
-                                    contemporain.
-                                </h1>
-                                <p className="animate-fade-up-delay-2 max-w-xl text-base text-black/70">
-                                    Explorez nos capsules, filtres intelligents
-                                    et recommandations personnalisees pour un
-                                    shopping fluide.
-                                </p>
-                            </div>
-                            <div className="rounded-[28px] border border-black/10 bg-white p-6 shadow-[0_24px_60px_rgba(23,20,16,0.12)]">
-                                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.25em] text-black/50">
-                                    <span>Filtres rapides</span>
-                                    <span>6 articles</span>
-                                </div>
-                                <div className="mt-4 flex flex-wrap gap-3 text-xs font-semibold uppercase tracking-[0.2em]">
-                                    {[
-                                        'Capsule',
-                                        'Accessoires',
-                                        'Nouveautes',
-                                        'Best-sellers',
-                                    ].map((chip) => (
-                                        <span
-                                            key={chip}
-                                            className="rounded-full border border-black/15 px-4 py-2 text-black/60"
-                                        >
-                                            {chip}
-                                        </span>
-                                    ))}
-                                </div>
-                                <div className="mt-6 rounded-2xl bg-[var(--paper)] p-4 text-sm text-black/70">
-                                    Livraison gratuite des 120€ d&apos;achat
-                                    et retours sous 30 jours.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                            {products.map((product) => (
-                                <div
-                                    key={product.name}
-                                    className="rounded-[26px] border border-black/10 bg-white p-6 shadow-[0_20px_50px_rgba(23,20,16,0.08)] transition hover:-translate-y-1"
+                                <Link
+                                    href={route('profile.edit')}
+                                    className="text-[var(--muted)] hover:text-[var(--accent)]"
                                 >
-                                    <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.2em] text-black/50">
-                                        <span>{product.label}</span>
-                                        <span>{product.color}</span>
-                                    </div>
+                                    Mon compte
+                                </Link>
+                                {auth.user?.is_admin && (
                                     <Link
-                                        href={route('product.show', product.slug)}
-                                        className="mt-6 block h-36 rounded-2xl bg-[linear-gradient(135deg,rgba(255,107,53,0.16),rgba(27,153,139,0.18))]"
-                                    ></Link>
-                                    <Link
-                                        href={route('product.show', product.slug)}
-                                        className="mt-5 block text-lg font-semibold text-[var(--ink)] hover:text-[var(--accent)]"
+                                        href={route('admin.dashboard')}
+                                        className="text-[var(--muted)] hover:text-[var(--accent)]"
                                     >
-                                        {product.name}
+                                        Admin
                                     </Link>
-                                    <div className="mt-2 flex items-center justify-between text-sm text-black/70">
-                                        <span>{product.price}</span>
-                                        <button
-                                            type="button"
-                                            className="rounded-full border border-black/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
-                                        >
-                                            Ajouter
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                <Link
+                                    href={route('login')}
+                                    className="text-[var(--muted)] hover:text-[var(--accent)]"
+                                >
+                                    Connexion
+                                </Link>
+                                <Link
+                                    href={route('register')}
+                                    className="rounded-full bg-[linear-gradient(120deg,var(--accent),var(--accent-2))] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--bg-0)]"
+                                >
+                                    Inscription
+                                </Link>
+                            </>
+                        )}
+                    </nav>
+                    <div className="flex items-center gap-3 lg:hidden">
+                        <Link
+                            href="/"
+                            className="rounded-full border border-white/15 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em]"
+                        >
+                            Accueil
+                        </Link>
+                        {auth.user ? (
+                            <Link
+                                href={route('dashboard')}
+                                className="rounded-full bg-[var(--accent)] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--bg-0)]"
+                            >
+                                Dashboard
+                            </Link>
+                        ) : (
+                            <Link
+                                href={route('login')}
+                                className="rounded-full bg-[var(--accent)] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--bg-0)]"
+                            >
+                                Connexion
+                            </Link>
+                        )}
+                    </div>
+                </header>
+
+                <main className="relative mx-auto w-full max-w-6xl px-6 pb-20">
+                    <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+                        <div className="space-y-4">
+                            <p className="animate-fade-up text-xs font-semibold uppercase tracking-[0.35em] text-[var(--muted)]">
+                                Boutique
+                            </p>
+                            <h1 className="animate-fade-up-delay-1 font-['Chakra_Petch'] text-4xl font-semibold leading-tight sm:text-5xl">
+                                Materiel selectionne pour impression 3D et
+                                gaming.
+                            </h1>
+                            <p className="animate-fade-up-delay-2 max-w-xl text-base text-[var(--muted)]">
+                                Des packs calibres pour performancer vos setups
+                                et vos ateliers. Pieces certifiees, conseils
+                                techniques, disponibilité immediate.
+                            </p>
                         </div>
-                    </main>
-                </div>
+                        <div className="card-glow rounded-[28px] border border-white/10 bg-[var(--surface)] p-6">
+                            <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">
+                                <span>Filtres rapides</span>
+                                <span>6 articles</span>
+                            </div>
+                            <div className="mt-4 flex flex-wrap gap-3 text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--muted)]">
+                                {[
+                                    'Imprimantes',
+                                    'Filaments',
+                                    'Gaming',
+                                    'Upgrades',
+                                ].map((chip) => (
+                                    <span
+                                        key={chip}
+                                        className="rounded-full border border-white/10 px-4 py-2"
+                                    >
+                                        {chip}
+                                    </span>
+                                ))}
+                            </div>
+                            <div className="mt-6 rounded-2xl border border-white/10 bg-[var(--surface-2)] p-4 text-sm text-[var(--muted)]">
+                                Livraison 48h, support technique et retours 30
+                                jours.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                        {products.map((product) => (
+                            <div
+                                key={product.name}
+                                className="card-glow rounded-[26px] border border-white/10 bg-[var(--surface)] p-6 transition hover:-translate-y-1"
+                            >
+                                <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--muted)]">
+                                    <span>{product.label}</span>
+                                    <span>{product.color}</span>
+                                </div>
+                                <Link
+                                    href={route('product.show', product.slug)}
+                                    className="mt-6 block h-36 rounded-2xl bg-[linear-gradient(135deg,rgba(38,244,208,0.18),rgba(255,138,61,0.2))]"
+                                ></Link>
+                                <Link
+                                    href={route('product.show', product.slug)}
+                                    className="mt-5 block text-lg font-semibold text-[var(--ink)] hover:text-[var(--accent)]"
+                                >
+                                    {product.name}
+                                </Link>
+                                <div className="mt-2 flex items-center justify-between text-sm text-[var(--muted)]">
+                                    <span>{product.price}</span>
+                                    <button
+                                        type="button"
+                                        className="rounded-full border border-white/15 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                                    >
+                                        Ajouter
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </main>
             </div>
         </>
     );

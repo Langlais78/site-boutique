@@ -13,10 +13,10 @@ export default function Edit({
         <AuthenticatedLayout
             header={
                 <div className="space-y-2">
-                    <p className="text-xs font-semibold uppercase tracking-[0.35em] text-black/50">
+                    <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[var(--muted)]">
                         Compte
                     </p>
-                    <h2 className="font-['Fraunces'] text-3xl font-semibold text-[var(--ink)]">
+                    <h2 className="font-['Chakra_Petch'] text-3xl font-semibold text-[var(--ink)]">
                         Mon compte
                     </h2>
                 </div>
@@ -25,7 +25,7 @@ export default function Edit({
             <Head title="Mon compte" />
 
             <div className="mt-10 space-y-6">
-                <div className="rounded-[28px] border border-black/10 bg-white p-6 shadow-[0_20px_50px_rgba(23,20,16,0.08)]">
+                <div className="card-glow rounded-[28px] border border-white/10 bg-[var(--surface)] p-6">
                     <UpdateProfileInformationForm
                         mustVerifyEmail={mustVerifyEmail}
                         status={status}
@@ -33,11 +33,11 @@ export default function Edit({
                     />
                 </div>
 
-                <div className="rounded-[28px] border border-black/10 bg-white p-6 shadow-[0_20px_50px_rgba(23,20,16,0.08)]">
+                <div className="card-glow rounded-[28px] border border-white/10 bg-[var(--surface)] p-6">
                     <UpdatePasswordForm className="max-w-xl" />
                 </div>
 
-                <div className="rounded-[28px] border border-black/10 bg-white p-6 shadow-[0_20px_50px_rgba(23,20,16,0.08)]">
+                <div className="card-glow rounded-[28px] border border-white/10 bg-[var(--surface)] p-6">
                     <DeleteUserForm className="max-w-xl" />
                 </div>
             </div>

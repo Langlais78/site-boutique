@@ -6,10 +6,10 @@ export default function AdminDashboard() {
         <AuthenticatedLayout
             header={
                 <div className="space-y-2">
-                    <p className="text-xs font-semibold uppercase tracking-[0.35em] text-black/50">
+                    <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[var(--muted)]">
                         Administration
                     </p>
-                    <h2 className="font-['Fraunces'] text-3xl font-semibold text-[var(--ink)]">
+                    <h2 className="font-['Chakra_Petch'] text-3xl font-semibold text-[var(--ink)]">
                         Dashboard admin
                     </h2>
                 </div>
@@ -19,23 +19,23 @@ export default function AdminDashboard() {
 
             <div className="mt-10 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
                 <div className="space-y-6">
-                    <div className="rounded-[28px] border border-black/10 bg-white p-6 shadow-[0_20px_50px_rgba(23,20,16,0.08)]">
-                        <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.25em] text-black/50">
-                            <span>Ventes</span>
+                    <div className="card-glow rounded-[28px] border border-white/10 bg-[var(--surface)] p-6">
+                        <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">
+                            <span>Performance</span>
                             <span>30 jours</span>
                         </div>
                         <div className="mt-6 grid gap-4 sm:grid-cols-2">
                             {[
-                                { label: 'Chiffre d’affaires', value: '18 420€' },
-                                { label: 'Commandes', value: '146' },
-                                { label: 'Panier moyen', value: '126€' },
-                                { label: 'Taux retour', value: '3.2%' },
+                                { label: 'Chiffre d’affaires', value: '24 980€' },
+                                { label: 'Commandes', value: '182' },
+                                { label: 'Panier moyen', value: '137€' },
+                                { label: 'Tickets support', value: '8' },
                             ].map((stat) => (
                                 <div
                                     key={stat.label}
-                                    className="rounded-2xl border border-black/10 bg-[var(--paper)] px-4 py-4"
+                                    className="rounded-2xl border border-white/10 bg-[var(--surface-2)] px-4 py-4"
                                 >
-                                    <p className="text-xs uppercase tracking-[0.18em] text-black/50">
+                                    <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--muted)]">
                                         {stat.label}
                                     </p>
                                     <p className="mt-2 text-lg font-semibold text-[var(--ink)]">
@@ -46,51 +46,53 @@ export default function AdminDashboard() {
                         </div>
                     </div>
 
-                    <div className="rounded-[28px] border border-black/10 bg-white p-6 shadow-[0_20px_50px_rgba(23,20,16,0.08)]">
-                        <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.25em] text-black/50">
+                    <div className="card-glow rounded-[28px] border border-white/10 bg-[var(--surface)] p-6">
+                        <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">
                             <span>Commandes recentes</span>
-                            <span>Voir tout</span>
+                            <span>Live</span>
                         </div>
                         <div className="mt-6 space-y-4">
                             {[
                                 {
-                                    id: 'SB-2387',
+                                    id: 'BS-4210',
                                     customer: 'Lea Martin',
-                                    total: '138€',
+                                    total: '238€',
                                     status: 'Paiement confirme',
                                 },
                                 {
-                                    id: 'SB-2385',
+                                    id: 'BS-4207',
                                     customer: 'Rachid Benali',
-                                    total: '94€',
+                                    total: '114€',
                                     status: 'Preparation',
                                 },
                                 {
-                                    id: 'SB-2382',
+                                    id: 'BS-4203',
                                     customer: 'Alice Moro',
-                                    total: '212€',
+                                    total: '312€',
                                     status: 'Expedition',
                                 },
                             ].map((order) => (
                                 <div
                                     key={order.id}
-                                    className="flex items-center justify-between rounded-2xl border border-black/10 bg-[var(--paper)] px-5 py-4"
+                                    className="rounded-2xl border border-white/10 bg-[var(--surface-2)] px-5 py-4"
                                 >
-                                    <div>
-                                        <p className="text-base font-semibold text-[var(--ink)]">
-                                            {order.id}
-                                        </p>
-                                        <p className="text-xs uppercase tracking-[0.18em] text-black/50">
-                                            {order.customer}
-                                        </p>
-                                    </div>
-                                    <div className="text-right">
-                                        <p className="text-sm font-semibold text-[var(--accent)]">
-                                            {order.total}
-                                        </p>
-                                        <p className="text-xs uppercase tracking-[0.18em] text-black/50">
-                                            {order.status}
-                                        </p>
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <p className="text-base font-semibold text-[var(--ink)]">
+                                                {order.id}
+                                            </p>
+                                            <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--muted)]">
+                                                {order.customer}
+                                            </p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-sm font-semibold text-[var(--accent)]">
+                                                {order.total}
+                                            </p>
+                                            <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--muted)]">
+                                                {order.status}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -99,24 +101,24 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="space-y-6">
-                    <div className="rounded-[28px] border border-black/10 bg-white p-6 shadow-[0_24px_60px_rgba(23,20,16,0.12)]">
-                        <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.25em] text-black/50">
+                    <div className="card-glow rounded-[28px] border border-white/10 bg-[var(--surface)] p-6">
+                        <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">
                             <span>Stock critique</span>
-                            <span>5 articles</span>
+                            <span>5 items</span>
                         </div>
-                        <div className="mt-5 space-y-3 text-sm text-black/70">
+                        <div className="mt-5 space-y-3 text-sm text-[var(--muted)]">
                             {[
-                                'Veste Oragee - 6',
-                                'Sac Horizon - 4',
-                                'Sneakers Halo - 2',
-                                'Foulard Signal - 3',
+                                'CoreXY Nova - 4',
+                                'Filament Pro Carbon - 6',
+                                'Souris Vortex - 3',
+                                'Buses titane - 5',
                             ].map((item) => (
                                 <div
                                     key={item}
-                                    className="flex items-center justify-between rounded-2xl border border-black/10 bg-[var(--paper)] px-4 py-3"
+                                    className="flex items-center justify-between rounded-2xl border border-white/10 bg-[var(--surface-2)] px-4 py-3"
                                 >
                                     <span>{item}</span>
-                                    <span className="text-xs uppercase tracking-[0.18em] text-black/50">
+                                    <span className="text-[10px] uppercase tracking-[0.22em] text-[var(--muted)]">
                                         Reassort
                                     </span>
                                 </div>
@@ -124,28 +126,28 @@ export default function AdminDashboard() {
                         </div>
                     </div>
 
-                    <div className="rounded-[28px] border border-black/10 bg-white p-6 shadow-[0_24px_60px_rgba(23,20,16,0.12)]">
-                        <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.25em] text-black/50">
+                    <div className="card-glow rounded-[28px] border border-white/10 bg-[var(--surface)] p-6">
+                        <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">
                             <span>Actions rapides</span>
                             <span>Admin</span>
                         </div>
                         <div className="mt-5 flex flex-col gap-3">
                             {[
                                 'Ajouter un produit',
-                                'Creer une capsule',
-                                'Lancer une promo',
+                                'Programmer un drop',
+                                'Configurer une promo',
                             ].map((action) => (
                                 <button
                                     key={action}
                                     type="button"
-                                    className="rounded-full border border-black/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                                    className="rounded-full border border-white/15 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
                                 >
                                     {action}
                                 </button>
                             ))}
                             <Link
                                 href={route('boutique')}
-                                className="rounded-full bg-[var(--accent)] px-4 py-2 text-center text-xs font-semibold uppercase tracking-[0.2em] text-white"
+                                className="rounded-full bg-[linear-gradient(120deg,var(--accent),var(--accent-2))] px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--bg-0)]"
                             >
                                 Voir la boutique
                             </Link>

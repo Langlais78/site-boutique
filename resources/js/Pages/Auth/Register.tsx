@@ -28,15 +28,15 @@ export default function Register() {
 
             <form onSubmit={submit}>
                 <div className="mb-6 space-y-2 text-center">
-                    <p className="text-xs font-semibold uppercase tracking-[0.35em] text-black/50">
+                    <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[var(--muted)]">
                         Inscription
                     </p>
-                    <h1 className="font-['Fraunces'] text-3xl font-semibold text-[var(--ink)]">
-                        Rejoignez la boutique.
+                    <h1 className="font-['Chakra_Petch'] text-3xl font-semibold text-[var(--ink)]">
+                        Rejoignez Barbu Shop.
                     </h1>
-                    <p className="text-sm text-black/60">
-                        Creez votre espace client pour suivre vos commandes et
-                        acceder aux capsules privees.
+                    <p className="text-sm text-[var(--muted)]">
+                        Creez votre espace pour suivre vos commandes, vos
+                        machines et vos setups.
                     </p>
                 </div>
 
@@ -119,7 +119,7 @@ export default function Register() {
                 <div className="mt-4 flex items-center justify-end">
                     <Link
                         href={route('login')}
-                        className="text-sm text-black/60 underline hover:text-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2"
+                        className="text-sm text-[var(--muted)] underline hover:text-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2"
                     >
                         Deja un compte ?
                     </Link>
