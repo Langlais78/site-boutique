@@ -26,6 +26,7 @@ export interface Product {
     images?: string[];
     tags?: string[];
     variants?: string[];
+    categories?: Category[];
     weight_grams?: number | null;
     dimensions?: {
         length?: number | null;
@@ -34,6 +35,12 @@ export interface Product {
         unit?: string | null;
     };
     is_featured?: boolean;
+}
+
+export interface Category {
+    id: number;
+    name: string;
+    slug: string;
 }
 
 export interface Order {

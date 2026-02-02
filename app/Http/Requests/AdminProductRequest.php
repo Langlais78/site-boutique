@@ -29,6 +29,8 @@ class AdminProductRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'specs' => ['nullable', 'string'],
             'category' => ['nullable', 'string', 'max:255'],
+            'categories' => ['nullable', 'array'],
+            'categories.*' => ['integer', 'exists:categories,id'],
             'brand' => ['nullable', 'string', 'max:255'],
             'image_file' => ['nullable', 'image', 'max:8192'],
             'images_files' => ['nullable', 'array'],

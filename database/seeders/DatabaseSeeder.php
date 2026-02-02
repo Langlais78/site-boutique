@@ -31,7 +31,11 @@ class DatabaseSeeder extends Seeder
             ],
         );
 
-        $products = Product::factory(12)->create();
+        $this->call([
+            CategorySeeder::class,
+            ProductSeeder::class,
+        ]);
+        $products = Product::query()->get();
 
         $orders = Order::factory(2)->for($admin)->create();
 

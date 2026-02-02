@@ -1,17 +1,30 @@
 <?php
 
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminCategoryController;
 use App\Http\Controllers\AdminProductController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'index']);
 
 Route::get('/boutique', [ProductController::class, 'index'])->name('boutique');
+Route::get('/contact', function () {
+    return Inertia::render('Contact');
+})->name('contact');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+Route::get('/cgv', function () {
+    return Inertia::render('LegalCgv');
+})->name('legal.cgv');
+Route::get('/mentions-legales', function () {
+    return Inertia::render('LegalMentions');
+})->name('legal.mentions');
 
 Route::get('/produit/{product:slug}', [ProductController::class, 'show'])->name('product.show');
 
@@ -30,6 +43,8 @@ Route::prefix('admin')
     ->name('admin.')
     ->group(function () {
         Route::get('/', AdminDashboardController::class)->name('dashboard');
+        Route::post('categories', [AdminCategoryController::class, 'store'])
+            ->name('categories.store');
         Route::resource('products', AdminProductController::class)->except(['show']);
         Route::match(['post'], 'products/{product}', [AdminProductController::class, 'update'])
             ->name('products.update.post');

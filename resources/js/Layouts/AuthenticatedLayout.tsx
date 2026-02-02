@@ -19,7 +19,7 @@ export default function Authenticated({
         useState(false);
 
     return (
-        <div className="min-h-screen bg-tech text-[var(--ink)]">
+        <div className="min-h-screen bg-tech text-[var(--ink)] flex flex-col">
             <div className="absolute inset-0 bg-grid opacity-60"></div>
             <nav className="relative border-b border-white/10 bg-[rgba(11,15,20,0.7)] backdrop-blur">
                 <div className="px-4 sm:px-6 lg:px-10">
@@ -28,10 +28,14 @@ export default function Authenticated({
                             href="/"
                             className="flex items-center gap-3 font-['Chakra_Petch'] text-sm font-semibold uppercase tracking-[0.3em]"
                         >
-                            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--accent)] text-[var(--bg-0)]">
-                                BS
+                            <span className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-transparent text-[var(--bg-0)]">
+                                <img
+                                    src="/images/logo-barbu.png"
+                                    alt="Barbu Shop"
+                                    className="block h-12 w-12 object-contain"
+                                />
                             </span>
-                            Barbu Shop
+                            Barbu Studio
                         </Link>
 
                         <div className="hidden items-center gap-6 text-xs font-semibold uppercase tracking-[0.22em] lg:flex">
@@ -54,6 +58,16 @@ export default function Authenticated({
                                 }
                             >
                                 Boutique
+                            </Link>
+                            <Link
+                                href={route('contact')}
+                                className={
+                                    (page.url.startsWith('/contact')
+                                        ? 'text-[var(--accent)]'
+                                        : 'text-[var(--muted)] hover:text-[var(--accent)]')
+                                }
+                            >
+                                Contact
                             </Link>
                             {user ? (
                                 <>
@@ -216,6 +230,16 @@ export default function Authenticated({
                         >
                             Boutique
                         </Link>
+                        <Link
+                            href={route('contact')}
+                            className={
+                                page.url.startsWith('/contact')
+                                    ? 'text-[var(--accent)]'
+                                    : 'hover:text-[var(--accent)]'
+                            }
+                        >
+                            Contact
+                        </Link>
                         {user ? (
                             <>
                                 <Link
@@ -325,11 +349,118 @@ export default function Authenticated({
             <main
                 className={
                     (fullWidth ? 'max-w-none px-0' : 'mx-auto max-w-6xl px-6') +
-                    ' relative w-full pb-16'
+                    ' relative w-full pb-16 flex-1'
                 }
             >
                 {children}
             </main>
+
+            <footer className="relative border-t border-white/10 bg-[rgba(11,15,20,0.7)]">
+                <div className="px-6 py-12">
+                    <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+                        <div>
+                            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--muted)]">
+                                Barbu Studio
+                            </p>
+                            <p className="mt-3 max-w-md text-sm text-[var(--muted)]">
+                                Boutique tech impression 3D & gaming. Produits
+                                premium, drops limites, support expert.
+                            </p>
+                            <div className="mt-4 space-y-2 text-sm text-[var(--muted)]">
+                                <p>contact@barbu-studio.fr</p>
+                                <p>Lun - Ven : 9h00 - 18h00</p>
+                                <p>Samedi : 10h00 - 14h00</p>
+                            </div>
+                        </div>
+
+                        <div className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">
+                            <p className="mb-4 text-xs">Boutique</p>
+                            <div className="space-y-3">
+                                <Link
+                                    href="/"
+                                    className="hover:text-[var(--accent)]"
+                                >
+                                    Accueil
+                                </Link>
+                                <Link
+                                    href={route('boutique')}
+                                    className="hover:text-[var(--accent)]"
+                                >
+                                    Boutique
+                                </Link>
+                                <Link
+                                    href={route('contact')}
+                                    className="hover:text-[var(--accent)]"
+                                >
+                                    Contact
+                                </Link>
+                            </div>
+                        </div>
+
+                        <div className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">
+                            <p className="mb-4 text-xs">Compte</p>
+                            <div className="space-y-3">
+                                <Link
+                                    href={route('cart.index')}
+                                    className="hover:text-[var(--accent)]"
+                                >
+                                    Panier
+                                </Link>
+                                {user ? (
+                                    <Link
+                                        href={route('profile.edit')}
+                                        className="hover:text-[var(--accent)]"
+                                    >
+                                        Mon compte
+                                    </Link>
+                                ) : (
+                                    <Link
+                                        href={route('login')}
+                                        className="hover:text-[var(--accent)]"
+                                    >
+                                        Connexion
+                                    </Link>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">
+                            <p className="mb-4 text-xs">Legal</p>
+                            <div className="space-y-3">
+                                <Link
+                                    href="/cgv"
+                                    className="hover:text-[var(--accent)]"
+                                >
+                                    Conditions de vente
+                                </Link>
+                                <Link
+                                    href="/mentions-legales"
+                                    className="hover:text-[var(--accent)]"
+                                >
+                                    Mentions legales
+                                </Link>
+                                <Link
+                                    href="/confidentialite"
+                                    className="hover:text-[var(--accent)]"
+                                >
+                                    Confidentialite
+                                </Link>
+                                <Link
+                                    href="/retours"
+                                    className="hover:text-[var(--accent)]"
+                                >
+                                    Retours & remboursements
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-10 flex flex-wrap items-center justify-between gap-4 text-[10px] uppercase tracking-[0.25em] text-[var(--muted)]">
+                        <span>© 2026 Barbu Studio. Tous droits reserves.</span>
+                        <span>Tech • Impression 3D • Gaming</span>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 }

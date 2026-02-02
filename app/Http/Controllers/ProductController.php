@@ -3,16 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Category;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class ProductController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $products = Product::query()
+        $categorySlug = $request->string('category')->toString();
+
+        $productsQuery = Product::query()
             ->where('is_active', true)
-            ->orderByDesc('created_at')
+            ->orderByDesc('created_at');
+
+        if ($categorySlug !== '') {
+            $productsQuery->whereHas('categories', function ($query) use ($categorySlug) {
+                $query->where('slug', $categorySlug);
+            });
+        }
+
+        $products = $productsQuery
+            ->with(['categories:id,name,slug'])
             ->get([
                 'id',
                 'name',
@@ -33,8 +46,21 @@ class ProductController extends Controller
                 'is_featured',
             ]);
 
+        $categories = Category::query()
+            ->withCount([
+                'products as products_count' => function ($query) {
+                    $query->where('is_active', true);
+                },
+            ])
+            ->orderBy('name')
+            ->get(['id', 'name', 'slug']);
+
         return Inertia::render('Boutique', [
             'products' => $products,
+            'categories' => $categories,
+            'filters' => [
+                'category' => $categorySlug,
+            ],
         ]);
     }
 
@@ -60,6 +86,11 @@ class ProductController extends Controller
                 'image' => $product->image,
                 'stock' => $product->stock,
                 'images' => $product->images ?? [],
+                'categories' => $product->categories()->get([
+                    'categories.id',
+                    'categories.name',
+                    'categories.slug',
+                ]),
                 'tags' => $product->tags ?? [],
                 'variants' => $product->variants ?? [],
                 'weight_grams' => $product->weight_grams,

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AdminProductRequest;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
@@ -40,20 +41,31 @@ class AdminProductController extends Controller
 
     public function create(): Response
     {
-        return Inertia::render('Admin/Products/Create');
+        $categories = Category::query()
+            ->orderBy('name')
+            ->get(['id', 'name', 'slug']);
+
+        return Inertia::render('Admin/Products/Create', [
+            'categories' => $categories,
+        ]);
     }
 
     public function store(AdminProductRequest $request): RedirectResponse
     {
         $data = $this->validatedData($request);
 
-        Product::create($data);
+        $product = Product::create($data);
+        $product->categories()->sync($request->input('categories', []));
 
         return redirect()->route('admin.products.index');
     }
 
     public function edit(Product $product): Response
     {
+        $categories = Category::query()
+            ->orderBy('name')
+            ->get(['id', 'name', 'slug']);
+
         return Inertia::render('Admin/Products/Edit', [
             'product' => [
                 'id' => $product->id,
@@ -83,6 +95,8 @@ class AdminProductController extends Controller
                 'is_active' => $product->is_active,
                 'is_featured' => $product->is_featured,
             ],
+            'categories' => $categories,
+            'selectedCategoryIds' => $product->categories()->pluck('categories.id')->all(),
         ]);
     }
 
@@ -91,6 +105,7 @@ class AdminProductController extends Controller
         $data = $this->validatedData($request, $product);
 
         $product->update($data);
+        $product->categories()->sync($request->input('categories', []));
 
         return redirect()->route('admin.products.index');
     }

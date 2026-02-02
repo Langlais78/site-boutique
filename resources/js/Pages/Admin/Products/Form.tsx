@@ -2,8 +2,9 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import { Link, useForm } from '@inertiajs/react';
-import { FormEvent } from 'react';
+import { Link, router, useForm } from '@inertiajs/react';
+import { FormEvent, useState } from 'react';
+import { Category } from '@/types';
 
 type ProductFormData = {
     name: string;
@@ -20,7 +21,7 @@ type ProductFormData = {
     specs: string;
     tags: string;
     variants: string;
-    category: string;
+    categories: number[];
     brand: string;
     stock: string;
     weight_grams: string;
@@ -39,6 +40,8 @@ type Props = {
     action: string;
     method?: 'post' | 'put';
     updateAction?: string;
+    categories: Category[];
+    selectedCategoryIds?: number[];
     initialValues?: Partial<ProductFormData>;
     initialImage?: string | null;
     initialImages?: string[];
@@ -49,10 +52,15 @@ export default function ProductForm({
     action,
     method = 'post',
     updateAction,
+    categories,
+    selectedCategoryIds = [],
     initialValues,
     initialImage,
     initialImages = [],
 }: Props) {
+    const [showCategoryInput, setShowCategoryInput] = useState(false);
+    const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+    const [newCategoryName, setNewCategoryName] = useState('');
     const { data, setData, post, put, processing, errors } = useForm<ProductFormData>({
         name: initialValues?.name ?? '',
         slug: initialValues?.slug ?? '',
@@ -68,7 +76,7 @@ export default function ProductForm({
         specs: initialValues?.specs ?? '',
         tags: initialValues?.tags ?? '',
         variants: initialValues?.variants ?? '',
-        category: initialValues?.category ?? '',
+        categories: selectedCategoryIds,
         brand: initialValues?.brand ?? '',
         stock: initialValues?.stock ?? '0',
         weight_grams: initialValues?.weight_grams ?? '',
@@ -81,6 +89,9 @@ export default function ProductForm({
         image_file: null,
         images_files: [],
     });
+    const selectedCategoryNames = categories
+        .filter((category) => data.categories.includes(category.id))
+        .map((category) => category.name);
 
     const submit = (event: FormEvent) => {
         event.preventDefault();
@@ -197,17 +208,111 @@ export default function ProductForm({
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="category" value="Categorie" />
-                    <TextInput
-                        id="category"
-                        name="category"
-                        value={data.category}
-                        className="mt-2 block w-full"
-                        onChange={(event) =>
-                            setData('category', event.target.value)
-                        }
-                    />
-                    <InputError message={errors.category} className="mt-2" />
+                    <div className="flex items-center justify-between">
+                        <InputLabel value="Categories" />
+                        <button
+                            type="button"
+                            onClick={() => setShowCategoryInput((value) => !value)}
+                            className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/20 text-xs font-semibold text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                            aria-label="Ajouter une categorie"
+                        >
+                            +
+                        </button>
+                    </div>
+                    {showCategoryInput && (
+                        <div className="mt-3 flex flex-wrap items-center gap-3">
+                            <TextInput
+                                value={newCategoryName}
+                                className="h-10 w-full flex-1"
+                                placeholder="Nouvelle categorie"
+                                onChange={(event) =>
+                                    setNewCategoryName(event.target.value)
+                                }
+                            />
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    if (!newCategoryName.trim()) {
+                                        return;
+                                    }
+                                    router.post(
+                                        route('admin.categories.store'),
+                                        { name: newCategoryName.trim() },
+                                        {
+                                            preserveScroll: true,
+                                            onSuccess: () => {
+                                                setNewCategoryName('');
+                                                setShowCategoryInput(false);
+                                                router.reload({
+                                                    only: ['categories'],
+                                                });
+                                            },
+                                        },
+                                    );
+                                }}
+                                className="rounded-full border border-white/15 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                            >
+                                Ajouter
+                            </button>
+                        </div>
+                    )}
+                    <div className="mt-2">
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setShowCategoryDropdown((value) => !value)
+                            }
+                            className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-[var(--surface-2)] px-4 py-3 text-left text-sm text-[var(--muted)]"
+                        >
+                            <span>
+                                {data.categories.length > 0
+                                    ? selectedCategoryNames.join(', ')
+                                    : 'Selectionner des categories'}
+                            </span>
+                            <span className="text-xs">▾</span>
+                        </button>
+                        {showCategoryDropdown && (
+                            <div className="mt-2 grid gap-2 rounded-2xl border border-white/10 bg-white/5 p-3 text-sm text-[var(--muted)]">
+                                {categories.length === 0 ? (
+                                    <p>Aucune categorie disponible.</p>
+                                ) : (
+                                    categories.map((category) => (
+                                        <label
+                                            key={category.id}
+                                            className="flex items-center gap-2"
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={data.categories.includes(
+                                                    category.id,
+                                                )}
+                                                onChange={(event) => {
+                                                    if (event.target.checked) {
+                                                        setData('categories', [
+                                                            ...data.categories,
+                                                            category.id,
+                                                        ]);
+                                                    } else {
+                                                        setData(
+                                                            'categories',
+                                                            data.categories.filter(
+                                                                (id) =>
+                                                                    id !==
+                                                                    category.id,
+                                                            ),
+                                                        );
+                                                    }
+                                                }}
+                                                className="h-4 w-4 rounded border-white/20 text-[var(--accent)] focus:ring-[var(--accent)]"
+                                            />
+                                            <span>{category.name}</span>
+                                        </label>
+                                    ))
+                                )}
+                            </div>
+                        )}
+                    </div>
+                    <InputError message={errors.categories} className="mt-2" />
                 </div>
 
                 <div>

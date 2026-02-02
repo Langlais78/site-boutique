@@ -1,8 +1,11 @@
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
+import { Category, PageProps } from '@/types';
 import ProductForm from './Form';
 
-export default function Create() {
+export default function Create({
+    categories = [],
+}: PageProps<{ categories: Category[] }>) {
     return (
         <AdminLayout
             header={
@@ -22,6 +25,7 @@ export default function Create() {
                 <ProductForm
                     submitLabel="Creer"
                     action={route('admin.products.store')}
+                    categories={categories}
                 />
             </div>
         </AdminLayout>

@@ -1,6 +1,6 @@
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
-import { PageProps, Product } from '@/types';
+import { Category, PageProps, Product } from '@/types';
 import ProductForm from './Form';
 
 type ProductFormValues = Product & {
@@ -22,7 +22,13 @@ type ProductFormValues = Product & {
 
 export default function Edit({
     product,
-}: PageProps<{ product: ProductFormValues }>) {
+    categories = [],
+    selectedCategoryIds = [],
+}: PageProps<{
+    product: ProductFormValues;
+    categories: Category[];
+    selectedCategoryIds: number[];
+}>) {
     return (
         <AdminLayout
             header={
@@ -44,6 +50,8 @@ export default function Edit({
                     action={route('admin.products.update', product.id)}
                     method="put"
                     updateAction={route('admin.products.update.post', product.id)}
+                    categories={categories}
+                    selectedCategoryIds={selectedCategoryIds}
                     initialImage={product.image ?? null}
                     initialImages={product.images ?? []}
                     initialValues={{
@@ -61,7 +69,6 @@ export default function Edit({
                         specs: (product.specs ?? []).join('\n'),
                         tags: (product.tags ?? []).join('\n'),
                         variants: (product.variants ?? []).join('\n'),
-                        category: product.category ?? '',
                         brand: product.brand ?? '',
                         stock: product.stock?.toString() ?? '0',
                         weight_grams: product.weight_grams?.toString() ?? '',
