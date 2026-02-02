@@ -52,6 +52,8 @@ Route::prefix('admin')
             ->name('categories.store');
         Route::resource('accessories', AdminAccessoryController::class)->except(['show']);
         Route::resource('custom-arcades', AdminCustomArcadeController::class)->except(['show']);
+        Route::get('products/{product}', [AdminProductController::class, 'show'])
+            ->name('products.show');
         Route::resource('products', AdminProductController::class)->except(['show']);
         Route::match(['post'], 'products/{product}', [AdminProductController::class, 'update'])
             ->name('products.update.post');

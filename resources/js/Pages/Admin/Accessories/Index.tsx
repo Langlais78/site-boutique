@@ -1,6 +1,7 @@
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import { PageProps } from '@/types';
+import { useMemo, useState } from 'react';
 
 export type Accessory = {
     id: number;
@@ -13,6 +14,27 @@ export type Accessory = {
 export default function Index({
     accessories = [],
 }: PageProps<{ accessories: Accessory[] }>) {
+    const [query, setQuery] = useState('');
+    const [activeType, setActiveType] = useState('all');
+
+    const types = useMemo(() => {
+        const list = accessories.map((item) => item.type);
+        return Array.from(new Set(list));
+    }, [accessories]);
+
+    const filtered = useMemo(() => {
+        const normalizedQuery = query.trim().toLowerCase();
+        return accessories.filter((item) => {
+            const matchesType =
+                activeType === 'all' || item.type === activeType;
+            const matchesQuery =
+                normalizedQuery.length === 0
+                || item.name.toLowerCase().includes(normalizedQuery)
+                || item.type.toLowerCase().includes(normalizedQuery);
+            return matchesType && matchesQuery;
+        });
+    }, [accessories, activeType, query]);
+
     const handleDelete = (id: number) => {
         if (!confirm('Supprimer cet accessoire ?')) {
             return;
@@ -37,7 +59,7 @@ export default function Index({
 
             <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
                 <p className="text-sm text-[var(--muted)]">
-                    {accessories.length} accessoires
+                    {filtered.length} accessoires
                 </p>
                 <Link
                     href={route('admin.accessories.create')}
@@ -47,13 +69,54 @@ export default function Index({
                 </Link>
             </div>
 
-            <div className="mt-6 space-y-3">
-                {accessories.length === 0 ? (
+            <div className="mt-6 space-y-6">
+                <div className="card-glow rounded-[24px] border border-white/10 bg-[var(--surface)] p-5">
+                    <div className="flex flex-wrap items-center gap-3">
+                        <div className="flex flex-wrap gap-2 text-[10px] font-semibold uppercase tracking-[0.25em]">
+                            <button
+                                type="button"
+                                onClick={() => setActiveType('all')}
+                                className={
+                                    activeType === 'all'
+                                        ? 'rounded-full border border-[var(--accent)] px-4 py-2 text-[var(--accent)]'
+                                        : 'rounded-full border border-white/15 px-4 py-2 text-[var(--muted)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
+                                }
+                            >
+                                Tous
+                            </button>
+                            {types.map((type) => (
+                                <button
+                                    key={type}
+                                    type="button"
+                                    onClick={() => setActiveType(type)}
+                                    className={
+                                        activeType === type
+                                            ? 'rounded-full border border-[var(--accent)] px-4 py-2 text-[var(--accent)]'
+                                            : 'rounded-full border border-white/15 px-4 py-2 text-[var(--muted)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
+                                    }
+                                >
+                                    {type}
+                                </button>
+                            ))}
+                        </div>
+                        <div className="ml-auto flex w-full items-center sm:w-auto">
+                            <input
+                                type="search"
+                                value={query}
+                                onChange={(event) => setQuery(event.target.value)}
+                                placeholder="Rechercher un accessoire..."
+                                className="h-10 w-full rounded-full border border-white/15 bg-[var(--surface-2)] px-4 text-xs uppercase tracking-[0.2em] text-[var(--ink)] placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:outline-none sm:w-72"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {filtered.length === 0 ? (
                     <div className="card-glow rounded-[28px] border border-white/10 bg-[var(--surface)] p-6 text-sm text-[var(--muted)]">
                         Aucun accessoire pour le moment.
                     </div>
                 ) : (
-                    accessories.map((item) => (
+                    filtered.map((item) => (
                         <div
                             key={item.id}
                             className="card-glow flex flex-wrap items-center justify-between gap-4 rounded-[24px] border border-white/10 bg-[var(--surface)] px-6 py-4"

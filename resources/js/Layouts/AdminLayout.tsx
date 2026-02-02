@@ -17,6 +17,8 @@ export default function AdminLayout({
     const isDashboard =
         page.url === '/admin' || page.url.startsWith('/admin/dashboard');
     const isProducts = page.url.startsWith('/admin/products');
+    const isAccessories = page.url.startsWith('/admin/accessories');
+    const isCustomArcades = page.url.startsWith('/admin/custom-arcades');
 
     const navItem = (active: boolean) =>
         active
@@ -43,6 +45,18 @@ export default function AdminLayout({
                                 className={navItem(isProducts)}
                             >
                                 Produits
+                            </Link>
+                            <Link
+                                href={route('admin.accessories.index')}
+                                className={navItem(isAccessories)}
+                            >
+                                Accessoires
+                            </Link>
+                            <Link
+                                href={route('admin.custom-arcades.index')}
+                                className={navItem(isCustomArcades)}
+                            >
+                                Bornes sur mesure
                             </Link>
                         </div>
 
