@@ -22,7 +22,11 @@ class ProductFactory extends Factory
         return [
             'name' => Str::title($name),
             'slug' => Str::slug($name),
+            'sku' => strtoupper(Str::random(8)),
             'price_cents' => fake()->numberBetween(1900, 159900),
+            'sale_price_cents' => fake()->boolean(25)
+                ? fake()->numberBetween(1500, 129900)
+                : null,
             'currency' => 'EUR',
             'badge' => fake()->randomElement([
                 'Precision',
@@ -37,6 +41,7 @@ class ProductFactory extends Factory
                 'Anthracite',
             ]),
             'summary' => fake()->sentence(),
+            'short_description' => fake()->sentence(),
             'description' => fake()->paragraph(),
             'specs' => [
                 fake()->word(),
@@ -48,9 +53,29 @@ class ProductFactory extends Factory
                 'Gaming',
                 'Atelier',
             ]),
+            'brand' => fake()->randomElement([
+                'Barbu',
+                'Nova',
+                'Flux',
+                'Forge',
+            ]),
             'image' => null,
+            'images' => [],
+            'tags' => [
+                fake()->word(),
+                fake()->word(),
+            ],
+            'variants' => [],
             'stock' => fake()->numberBetween(0, 18),
+            'weight_grams' => fake()->numberBetween(200, 5000),
+            'dimensions' => [
+                'length' => fake()->numberBetween(10, 60),
+                'width' => fake()->numberBetween(10, 60),
+                'height' => fake()->numberBetween(5, 40),
+                'unit' => 'cm',
+            ],
             'is_active' => true,
+            'is_featured' => fake()->boolean(20),
         ];
     }
 }

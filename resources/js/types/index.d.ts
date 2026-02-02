@@ -10,15 +10,30 @@ export interface Product {
     id: number;
     name: string;
     slug: string;
+    sku?: string | null;
     price_cents: number;
+    sale_price_cents?: number | null;
     currency: string;
     badge?: string | null;
     color?: string | null;
     summary?: string | null;
+    short_description?: string | null;
     description?: string | null;
     specs?: string[];
     category?: string | null;
+    brand?: string | null;
     stock?: number;
+    images?: string[];
+    tags?: string[];
+    variants?: string[];
+    weight_grams?: number | null;
+    dimensions?: {
+        length?: number | null;
+        width?: number | null;
+        height?: number | null;
+        unit?: string | null;
+    };
+    is_featured?: boolean;
 }
 
 export interface Order {

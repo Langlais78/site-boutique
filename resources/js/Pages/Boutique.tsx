@@ -10,11 +10,20 @@ export default function Boutique({
             style: 'currency',
             currency: product.currency || 'EUR',
         }).format((product.price_cents || 0) / 100);
+    const formatSale = (product: Product) =>
+        product.sale_price_cents
+            ? new Intl.NumberFormat('fr-FR', {
+                  style: 'currency',
+                  currency: product.currency || 'EUR',
+              }).format((product.sale_price_cents || 0) / 100)
+            : null;
+    const getImage = (product: Product) =>
+        product.image || product.images?.[0] || '';
 
     return (
         <AuthenticatedLayout>
             <Head title="Boutique" />
-            <main className="relative mx-auto w-full max-w-6xl px-6 pb-20">
+            <main className="relative mx-auto w-full max-w-6xl px-6 pb-20 pt-6">
                     <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
                         <div className="space-y-4">
                             <p className="animate-fade-up text-xs font-semibold uppercase tracking-[0.35em] text-[var(--muted)]">
@@ -75,8 +84,19 @@ export default function Boutique({
                                     </div>
                                     <Link
                                         href={route('product.show', product.slug)}
-                                        className="mt-6 block h-36 rounded-2xl bg-[linear-gradient(135deg,rgba(38,244,208,0.18),rgba(255,138,61,0.2))]"
-                                    ></Link>
+                                        className="mt-6 block h-36 overflow-hidden rounded-2xl border border-white/10 bg-[var(--surface-2)]"
+                                    >
+                                        {getImage(product) ? (
+                                            <img
+                                                src={getImage(product)}
+                                                alt={product.name}
+                                                className="h-full w-full object-cover"
+                                                loading="lazy"
+                                            />
+                                        ) : (
+                                            <div className="h-full w-full bg-[linear-gradient(135deg,rgba(38,244,208,0.18),rgba(255,138,61,0.2))]" />
+                                        )}
+                                    </Link>
                                     <Link
                                         href={route('product.show', product.slug)}
                                         className="mt-5 block text-lg font-semibold text-[var(--ink)] hover:text-[var(--accent)]"
@@ -84,7 +104,14 @@ export default function Boutique({
                                         {product.name}
                                     </Link>
                                     <div className="mt-2 flex items-center justify-between text-sm text-[var(--muted)]">
-                                        <span>{formatPrice(product)}</span>
+                                        <div className="flex flex-col">
+                                            <span>{formatPrice(product)}</span>
+                                            {formatSale(product) && (
+                                                <span className="text-[10px] uppercase tracking-[0.22em] text-[var(--accent)]">
+                                                    Promo {formatSale(product)}
+                                                </span>
+                                            )}
+                                        </div>
                                         <button
                                             type="button"
                                             onClick={() =>

@@ -13,13 +13,16 @@ class HomeController extends Controller
     {
         $featured = Product::query()
             ->where('is_active', true)
+            ->where('is_featured', true)
             ->orderByDesc('created_at')
             ->take(3)
             ->get([
                 'id',
                 'name',
                 'slug',
+                'sku',
                 'price_cents',
+                'sale_price_cents',
                 'currency',
                 'badge',
                 'color',

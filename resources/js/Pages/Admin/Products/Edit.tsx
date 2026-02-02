@@ -5,8 +5,19 @@ import ProductForm from './Form';
 
 type ProductFormValues = Product & {
     price: string;
+    sale_price?: string;
     specs: string[];
+    tags?: string[];
+    variants?: string[];
+    weight_grams?: number | null;
+    dimensions?: {
+        length?: number | null;
+        width?: number | null;
+        height?: number | null;
+        unit?: string | null;
+    };
     is_active: boolean;
+    is_featured?: boolean;
 };
 
 export default function Edit({
@@ -35,17 +46,31 @@ export default function Edit({
                     initialValues={{
                         name: product.name ?? '',
                         slug: product.slug ?? '',
+                        sku: product.sku ?? '',
                         price: product.price ?? '',
+                        sale_price: product.sale_price ?? '',
                         currency: product.currency ?? 'EUR',
                         badge: product.badge ?? '',
                         color: product.color ?? '',
                         summary: product.summary ?? '',
+                        short_description: product.short_description ?? '',
                         description: product.description ?? '',
                         specs: (product.specs ?? []).join('\n'),
+                        tags: (product.tags ?? []).join('\n'),
+                        variants: (product.variants ?? []).join('\n'),
                         category: product.category ?? '',
-                        image: product.image ?? '',
+                        brand: product.brand ?? '',
                         stock: product.stock?.toString() ?? '0',
+                        weight_grams: product.weight_grams?.toString() ?? '',
+                        dimensions_length:
+                            product.dimensions?.length?.toString() ?? '',
+                        dimensions_width:
+                            product.dimensions?.width?.toString() ?? '',
+                        dimensions_height:
+                            product.dimensions?.height?.toString() ?? '',
+                        dimensions_unit: product.dimensions?.unit ?? 'cm',
                         is_active: product.is_active ?? true,
+                        is_featured: product.is_featured ?? false,
                     }}
                 />
             </div>

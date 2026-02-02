@@ -12,6 +12,13 @@ export default function Index({ products = [] }: PageProps<Props>) {
             style: 'currency',
             currency: product.currency || 'EUR',
         }).format((product.price_cents || 0) / 100);
+    const formatSale = (product: Product) =>
+        product.sale_price_cents
+            ? new Intl.NumberFormat('fr-FR', {
+                  style: 'currency',
+                  currency: product.currency || 'EUR',
+              }).format((product.sale_price_cents || 0) / 100)
+            : null;
 
     const handleDelete = (productId: number) => {
         if (!confirm('Supprimer ce produit ?')) {
@@ -71,6 +78,11 @@ export default function Index({ products = [] }: PageProps<Props>) {
                                 <p className="text-sm font-semibold text-[var(--accent)]">
                                     {formatPrice(product)}
                                 </p>
+                                {formatSale(product) && (
+                                    <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--muted)]">
+                                        Promo {formatSale(product)}
+                                    </p>
+                                )}
                                 <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--muted)]">
                                     Stock {product.stock ?? 0} ·{' '}
                                     {product.is_active ? 'Actif' : 'Inactif'}

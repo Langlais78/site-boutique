@@ -42,19 +42,6 @@ export default function Authenticated({
                             >
                                 Boutique
                             </Link>
-                            <Link
-                                href={route('cart.index')}
-                                className="text-[var(--muted)] hover:text-[var(--accent)]"
-                            >
-                                <span className="relative">
-                                    Panier
-                                    {(cartCount ?? 0) > 0 && (
-                                        <span className="absolute -right-4 -top-3 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[var(--accent)] px-1 text-[9px] font-bold text-[var(--bg-0)]">
-                                            {cartCount}
-                                        </span>
-                                    )}
-                                </span>
-                            </Link>
                             {user ? (
                                 <>
                                     <Link
@@ -89,6 +76,19 @@ export default function Authenticated({
                                 </>
                             )}
                             <span className="h-5 w-px bg-white/10"></span>
+                            <Link
+                                href={route('cart.index')}
+                                className="text-[var(--muted)] hover:text-[var(--accent)]"
+                            >
+                                <span className="relative">
+                                    Panier
+                                    {(cartCount ?? 0) > 0 && (
+                                        <span className="absolute -right-4 -top-3 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[var(--accent)] px-1 text-[9px] font-bold text-[var(--bg-0)]">
+                                            {cartCount}
+                                        </span>
+                                    )}
+                                </span>
+                            </Link>
                             {user && (
                                 <Link
                                     href={route('logout')}
@@ -132,19 +132,6 @@ export default function Authenticated({
                         >
                             Boutique
                         </Link>
-                        <Link
-                            href={route('cart.index')}
-                            className="hover:text-[var(--accent)]"
-                        >
-                            <span className="relative">
-                                Panier
-                                {(cartCount ?? 0) > 0 && (
-                                    <span className="absolute -right-4 -top-3 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[var(--accent)] px-1 text-[9px] font-bold text-[var(--bg-0)]">
-                                        {cartCount}
-                                    </span>
-                                )}
-                            </span>
-                        </Link>
                         {user ? (
                             <>
                                 <Link
@@ -161,6 +148,19 @@ export default function Authenticated({
                                         Admin
                                     </Link>
                                 )}
+                                <Link
+                                    href={route('cart.index')}
+                                    className="hover:text-[var(--accent)]"
+                                >
+                                    <span className="relative">
+                                        Panier
+                                        {(cartCount ?? 0) > 0 && (
+                                            <span className="absolute -right-4 -top-3 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[var(--accent)] px-1 text-[9px] font-bold text-[var(--bg-0)]">
+                                                {cartCount}
+                                            </span>
+                                        )}
+                                    </span>
+                                </Link>
                                 <Link
                                     href={route('logout')}
                                     method="post"
@@ -186,6 +186,19 @@ export default function Authenticated({
                                     className="rounded-full bg-[linear-gradient(120deg,var(--accent),var(--accent-2))] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--bg-0)]"
                                 >
                                     Inscription
+                                </Link>
+                                <Link
+                                    href={route('cart.index')}
+                                    className="hover:text-[var(--accent)]"
+                                >
+                                    <span className="relative">
+                                        Panier
+                                        {(cartCount ?? 0) > 0 && (
+                                            <span className="absolute -right-4 -top-3 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[var(--accent)] px-1 text-[9px] font-bold text-[var(--bg-0)]">
+                                                {cartCount}
+                                            </span>
+                                        )}
+                                    </span>
                                 </Link>
                             </>
                         )}

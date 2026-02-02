@@ -9,11 +9,21 @@ export default function ProductShow({
         style: 'currency',
         currency: product.currency || 'EUR',
     }).format((product.price_cents || 0) / 100);
+    const formatSale = product.sale_price_cents
+        ? new Intl.NumberFormat('fr-FR', {
+              style: 'currency',
+              currency: product.currency || 'EUR',
+          }).format((product.sale_price_cents || 0) / 100)
+        : null;
+    const gallery = [
+        product.image,
+        ...(product.images ?? []),
+    ].filter((value) => Boolean(value)) as string[];
 
     return (
         <AuthenticatedLayout>
             <Head title={product.name} />
-            <main className="relative mx-auto w-full max-w-6xl px-6 pb-20">
+            <main className="relative mx-auto w-full max-w-6xl px-6 pb-20 pt-6">
                     <div className="grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-start">
                         <div className="space-y-6">
                             <div className="card-glow rounded-[28px] border border-white/10 bg-[var(--surface)] p-6">
@@ -21,16 +31,40 @@ export default function ProductShow({
                                     <span>{product.badge ?? 'Tech'}</span>
                                     <span>{product.color ?? 'Stock'}</span>
                                 </div>
-                                <div className="mt-6 h-72 rounded-3xl bg-[linear-gradient(135deg,rgba(38,244,208,0.2),rgba(255,138,61,0.2))]"></div>
-                                <div className="mt-4 grid grid-cols-3 gap-3">
-                                    {Array.from({ length: 3 }).map(
-                                        (_, index) => (
-                                            <div
-                                                key={index}
-                                                className="h-20 rounded-2xl bg-[linear-gradient(135deg,rgba(38,244,208,0.12),rgba(255,138,61,0.14))]"
-                                            ></div>
-                                        ),
+                                <div className="mt-6 h-72 overflow-hidden rounded-3xl border border-white/10 bg-[var(--surface-2)]">
+                                    {gallery[0] ? (
+                                        <img
+                                            src={gallery[0]}
+                                            alt={product.name}
+                                            className="h-full w-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="h-full w-full bg-[linear-gradient(135deg,rgba(38,244,208,0.2),rgba(255,138,61,0.2))]" />
                                     )}
+                                </div>
+                                <div className="mt-4 grid grid-cols-3 gap-3">
+                                    {gallery.length > 0
+                                        ? gallery.slice(0, 3).map((url) => (
+                                              <div
+                                                  key={url}
+                                                  className="h-20 overflow-hidden rounded-2xl border border-white/10 bg-[var(--surface-2)]"
+                                              >
+                                                  <img
+                                                      src={url}
+                                                      alt={product.name}
+                                                      className="h-full w-full object-cover"
+                                                      loading="lazy"
+                                                  />
+                                              </div>
+                                          ))
+                                        : Array.from({ length: 3 }).map(
+                                              (_, index) => (
+                                                  <div
+                                                      key={index}
+                                                      className="h-20 rounded-2xl bg-[linear-gradient(135deg,rgba(38,244,208,0.12),rgba(255,138,61,0.14))]"
+                                                  ></div>
+                                              ),
+                                          )}
                                 </div>
                             </div>
                         </div>
@@ -53,6 +87,11 @@ export default function ProductShow({
                                     <span>Prix</span>
                                     <span>{formatPrice}</span>
                                 </div>
+                                {formatSale && (
+                                    <p className="mt-2 text-[10px] uppercase tracking-[0.22em] text-[var(--accent)]">
+                                        Promo {formatSale}
+                                    </p>
+                                )}
                                 <div className="mt-5 flex flex-wrap gap-3 text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--muted)]">
                                     {(product.specs ?? ['—']).map((spec) => (
                                         <span

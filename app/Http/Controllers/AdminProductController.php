@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AdminProductRequest;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -19,12 +20,16 @@ class AdminProductController extends Controller
                 'id',
                 'name',
                 'slug',
+                'sku',
                 'price_cents',
+                'sale_price_cents',
                 'currency',
                 'badge',
                 'category',
+                'brand',
                 'stock',
                 'is_active',
+                'is_featured',
                 'updated_at',
             ]);
 
@@ -38,7 +43,7 @@ class AdminProductController extends Controller
         return Inertia::render('Admin/Products/Create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(AdminProductRequest $request): RedirectResponse
     {
         $data = $this->validatedData($request);
 
@@ -54,22 +59,34 @@ class AdminProductController extends Controller
                 'id' => $product->id,
                 'name' => $product->name,
                 'slug' => $product->slug,
+                'sku' => $product->sku,
                 'price' => $this->formatPrice($product->price_cents),
+                'sale_price' => $product->sale_price_cents !== null
+                    ? $this->formatPrice($product->sale_price_cents)
+                    : '',
                 'currency' => $product->currency,
                 'badge' => $product->badge,
                 'color' => $product->color,
                 'summary' => $product->summary,
+                'short_description' => $product->short_description,
                 'description' => $product->description,
                 'specs' => $product->specs ?? [],
                 'category' => $product->category,
+                'brand' => $product->brand,
                 'image' => $product->image,
+                'images' => $product->images ?? [],
+                'tags' => $product->tags ?? [],
+                'variants' => $product->variants ?? [],
                 'stock' => $product->stock,
+                'weight_grams' => $product->weight_grams,
+                'dimensions' => $product->dimensions ?? [],
                 'is_active' => $product->is_active,
+                'is_featured' => $product->is_featured,
             ],
         ]);
     }
 
-    public function update(Request $request, Product $product): RedirectResponse
+    public function update(AdminProductRequest $request, Product $product): RedirectResponse
     {
         $data = $this->validatedData($request, $product);
 
@@ -85,25 +102,9 @@ class AdminProductController extends Controller
         return redirect()->route('admin.products.index');
     }
 
-    private function validatedData(Request $request, ?Product $product = null): array
+    private function validatedData(AdminProductRequest $request, ?Product $product = null): array
     {
-        $rules = [
-            'name' => ['required', 'string', 'max:255'],
-            'slug' => ['nullable', 'string', 'max:255'],
-            'price' => ['required', 'numeric', 'min:0'],
-            'currency' => ['nullable', 'string', 'size:3'],
-            'badge' => ['nullable', 'string', 'max:255'],
-            'color' => ['nullable', 'string', 'max:255'],
-            'summary' => ['nullable', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'specs' => ['nullable', 'string'],
-            'category' => ['nullable', 'string', 'max:255'],
-            'image' => ['nullable', 'string', 'max:255'],
-            'stock' => ['nullable', 'integer', 'min:0'],
-            'is_active' => ['nullable', 'boolean'],
-        ];
-
-        $validated = $request->validate($rules);
+        $validated = $request->validated();
 
         $slug = $validated['slug'] ?? '';
         if ($slug === '') {
@@ -118,22 +119,52 @@ class AdminProductController extends Controller
             $slug = $slug . '-' . Str::lower(Str::random(4));
         }
 
-        $specs = $this->parseSpecs($validated['specs'] ?? null);
+        $specs = $this->parseList($validated['specs'] ?? null);
+        $tags = $this->parseList($validated['tags'] ?? null);
+        $variants = $this->parseList($validated['variants'] ?? null);
+        $dimensions = $this->parseDimensions($validated);
+        $imageUrl = $product?->image ?? null;
+        $galleryUrls = $product?->images ?? [];
+
+        if ($request->hasFile('image_file')) {
+            $imagePath = $request->file('image_file')->store('products', 'public');
+            $imageUrl = Storage::url($imagePath);
+        }
+
+        if ($request->hasFile('images_files')) {
+            $galleryUrls = [];
+            foreach ($request->file('images_files') as $file) {
+                $path = $file->store('products', 'public');
+                $galleryUrls[] = Storage::url($path);
+            }
+        }
 
         return [
             'name' => $validated['name'],
             'slug' => $slug,
+            'sku' => $validated['sku'] ?? null,
             'price_cents' => $this->priceToCents($validated['price']),
+            'sale_price_cents' => $validated['sale_price'] !== null
+                ? $this->priceToCents($validated['sale_price'])
+                : null,
             'currency' => $validated['currency'] ?? 'EUR',
             'badge' => $validated['badge'] ?? null,
             'color' => $validated['color'] ?? null,
             'summary' => $validated['summary'] ?? null,
+            'short_description' => $validated['short_description'] ?? null,
             'description' => $validated['description'] ?? null,
             'specs' => $specs,
             'category' => $validated['category'] ?? null,
-            'image' => $validated['image'] ?? null,
+            'brand' => $validated['brand'] ?? null,
+            'image' => $imageUrl,
+            'images' => $galleryUrls,
+            'tags' => $tags,
+            'variants' => $variants,
             'stock' => $validated['stock'] ?? 0,
+            'weight_grams' => $validated['weight_grams'] ?? null,
+            'dimensions' => $dimensions,
             'is_active' => (bool) ($validated['is_active'] ?? false),
+            'is_featured' => (bool) ($validated['is_featured'] ?? false),
         ];
     }
 
@@ -151,14 +182,33 @@ class AdminProductController extends Controller
     /**
      * @return list<string>
      */
-    private function parseSpecs(?string $specs): array
+    private function parseList(?string $value): array
     {
-        if (!$specs) {
+        if (!$value) {
             return [];
         }
 
-        $parts = preg_split('/\r\n|\r|\n|,/', $specs);
+        $parts = preg_split('/\r\n|\r|\n|,/', $value);
 
         return array_values(array_filter(array_map('trim', $parts)));
+    }
+
+    private function parseDimensions(array $validated): ?array
+    {
+        $length = $validated['dimensions_length'] ?? null;
+        $width = $validated['dimensions_width'] ?? null;
+        $height = $validated['dimensions_height'] ?? null;
+        $unit = $validated['dimensions_unit'] ?? null;
+
+        if ($length === null && $width === null && $height === null && $unit === null) {
+            return null;
+        }
+
+        return [
+            'length' => $length !== null ? (float) $length : null,
+            'width' => $width !== null ? (float) $width : null,
+            'height' => $height !== null ? (float) $height : null,
+            'unit' => $unit ?? 'cm',
+        ];
     }
 }
