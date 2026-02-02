@@ -12,7 +12,7 @@ class CartController extends Controller
 {
     public function index(Request $request): Response
     {
-        $cart = $this->getCart($request);
+        $cart = $this->summarize($this->getItemsMap($request));
 
         return Inertia::render('Cart', [
             'items' => $cart['items'],
@@ -25,8 +25,7 @@ class CartController extends Controller
         $quantity = (int) $request->input('quantity', 1);
         $quantity = max(1, $quantity);
 
-        $cart = $this->getCart($request);
-        $items = $cart['items'];
+        $items = $this->getItemsMap($request);
 
         if (isset($items[$product->id])) {
             $items[$product->id]['quantity'] += $quantity;
@@ -54,8 +53,7 @@ class CartController extends Controller
         $quantity = (int) $request->input('quantity', 1);
         $quantity = max(1, $quantity);
 
-        $cart = $this->getCart($request);
-        $items = $cart['items'];
+        $items = $this->getItemsMap($request);
 
         if (isset($items[$product->id])) {
             $items[$product->id]['quantity'] = $quantity;
@@ -70,8 +68,7 @@ class CartController extends Controller
 
     public function remove(Request $request, Product $product): RedirectResponse
     {
-        $cart = $this->getCart($request);
-        $items = $cart['items'];
+        $items = $this->getItemsMap($request);
 
         unset($items[$product->id]);
 
@@ -90,9 +87,17 @@ class CartController extends Controller
     /**
      * @return array{items: array<int, array<string, mixed>>, summary: array<string, int|string>}
      */
-    private function getCart(Request $request): array
+    private function getItemsMap(Request $request): array
     {
-        $items = $request->session()->get('cart.items', []);
+        return $request->session()->get('cart.items', []);
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $items
+     * @return array{items: array<int, array<string, mixed>>, summary: array<string, int|string>}
+     */
+    private function summarize(array $items): array
+    {
         $currency = 'EUR';
         $total = 0;
         $count = 0;

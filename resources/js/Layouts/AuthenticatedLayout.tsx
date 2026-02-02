@@ -3,8 +3,9 @@ import { PropsWithChildren, ReactNode, useState } from 'react';
 
 export default function Authenticated({
     header,
+    subnav,
     children,
-}: PropsWithChildren<{ header?: ReactNode }>) {
+}: PropsWithChildren<{ header?: ReactNode; subnav?: ReactNode }>) {
     const page = usePage();
     const user = page.props.auth.user;
     const cartCount = (page.props as { cart?: { count: number } }).cart?.count ?? 0;
@@ -54,35 +55,50 @@ export default function Authenticated({
                                     )}
                                 </span>
                             </Link>
-                            <Link
-                                href={route('dashboard')}
-                                className="text-[var(--muted)] hover:text-[var(--accent)]"
-                            >
-                                Dashboard
-                            </Link>
-                            <Link
-                                href={route('profile.edit')}
-                                className="text-[var(--muted)] hover:text-[var(--accent)]"
-                            >
-                                Mon compte
-                            </Link>
-                            {user?.is_admin && (
-                                <Link
-                                    href={route('admin.dashboard')}
-                                    className="text-[var(--muted)] hover:text-[var(--accent)]"
-                                >
-                                    Admin
-                                </Link>
+                            {user ? (
+                                <>
+                                    <Link
+                                        href={route('profile.edit')}
+                                        className="text-[var(--muted)] hover:text-[var(--accent)]"
+                                    >
+                                        Mon compte
+                                    </Link>
+                                    {user.is_admin && (
+                                        <Link
+                                            href={route('admin.dashboard')}
+                                            className="text-[var(--muted)] hover:text-[var(--accent)]"
+                                        >
+                                            Admin
+                                        </Link>
+                                    )}
+                                </>
+                            ) : (
+                                <>
+                                    <Link
+                                        href={route('login')}
+                                        className="text-[var(--muted)] hover:text-[var(--accent)]"
+                                    >
+                                        Connexion
+                                    </Link>
+                                    <Link
+                                        href={route('register')}
+                                        className="rounded-full bg-[linear-gradient(120deg,var(--accent),var(--accent-2))] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--bg-0)]"
+                                    >
+                                        Inscription
+                                    </Link>
+                                </>
                             )}
                             <span className="h-5 w-px bg-white/10"></span>
-                            <Link
-                                href={route('logout')}
-                                method="post"
-                                as="button"
-                                className="rounded-full border border-white/15 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
-                            >
-                                Deconnexion
-                            </Link>
+                            {user && (
+                                <Link
+                                    href={route('logout')}
+                                    method="post"
+                                    as="button"
+                                    className="rounded-full border border-white/15 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                                >
+                                    Deconnexion
+                                </Link>
+                            )}
                         </div>
 
                         <div className="flex items-center gap-3 lg:hidden">
@@ -129,37 +145,50 @@ export default function Authenticated({
                                 )}
                             </span>
                         </Link>
-                        <Link
-                            href={route('dashboard')}
-                            className="hover:text-[var(--accent)]"
-                        >
-                            Dashboard
-                        </Link>
-                        <Link
-                            href={route('profile.edit')}
-                            className="hover:text-[var(--accent)]"
-                        >
-                            Mon compte
-                        </Link>
-                        {user?.is_admin && (
-                            <Link
-                                href={route('admin.dashboard')}
-                                className="hover:text-[var(--accent)]"
-                            >
-                                Admin
-                            </Link>
+                        {user ? (
+                            <>
+                                <Link
+                                    href={route('profile.edit')}
+                                    className="hover:text-[var(--accent)]"
+                                >
+                                    Mon compte
+                                </Link>
+                                {user.is_admin && (
+                                    <Link
+                                        href={route('admin.dashboard')}
+                                        className="hover:text-[var(--accent)]"
+                                    >
+                                        Admin
+                                    </Link>
+                                )}
+                                <Link
+                                    href={route('logout')}
+                                    method="post"
+                                    as="button"
+                                    className="mt-2 inline-flex w-fit rounded-full border border-white/15 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--ink)]"
+                                >
+                                    Deconnexion
+                                </Link>
+                                <span className="mt-3 text-[10px] text-white/50">
+                                    {user.name} - {user.email}
+                                </span>
+                            </>
+                        ) : (
+                            <>
+                                <Link
+                                    href={route('login')}
+                                    className="hover:text-[var(--accent)]"
+                                >
+                                    Connexion
+                                </Link>
+                                <Link
+                                    href={route('register')}
+                                    className="rounded-full bg-[linear-gradient(120deg,var(--accent),var(--accent-2))] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--bg-0)]"
+                                >
+                                    Inscription
+                                </Link>
+                            </>
                         )}
-                        <Link
-                            href={route('logout')}
-                            method="post"
-                            as="button"
-                            className="mt-2 inline-flex w-fit rounded-full border border-white/15 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--ink)]"
-                        >
-                            Deconnexion
-                        </Link>
-                        <span className="mt-3 text-[10px] text-white/50">
-                            {user.name} · {user.email}
-                        </span>
                     </div>
                 </div>
             </nav>
@@ -167,6 +196,7 @@ export default function Authenticated({
             {header && (
                 <header className="relative mx-auto w-full max-w-6xl px-6 pt-10">
                     {header}
+                    {subnav && <div className="mt-6">{subnav}</div>}
                 </header>
             )}
 
