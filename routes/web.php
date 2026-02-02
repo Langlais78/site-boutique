@@ -18,13 +18,19 @@ Route::get('/boutique', function () {
     ]);
 })->name('boutique');
 
+Route::get('/produit/{slug}', function (string $slug) {
+    return Inertia::render('ProductShow', [
+        'slug' => $slug,
+    ]);
+})->name('product.show');
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/admin', function () {
     return Inertia::render('AdminDashboard');
-})->middleware(['auth', 'verified'])->name('admin.dashboard');
+})->middleware(['auth', 'verified', 'admin'])->name('admin.dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

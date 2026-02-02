@@ -43,12 +43,28 @@ export default function Welcome({ auth }: PageProps) {
                             </Link>
                             <span className="h-5 w-px bg-black/20"></span>
                             {auth.user ? (
-                                <Link
-                                    href={route('dashboard')}
-                                    className="hover:text-[var(--accent)]"
-                                >
-                                    Mon espace
-                                </Link>
+                                <>
+                                    <Link
+                                        href={route('dashboard')}
+                                        className="hover:text-[var(--accent)]"
+                                    >
+                                        Dashboard
+                                    </Link>
+                                    <Link
+                                        href={route('profile.edit')}
+                                        className="hover:text-[var(--accent)]"
+                                    >
+                                        Mon compte
+                                    </Link>
+                                    {auth.user?.is_admin && (
+                                        <Link
+                                            href={route('admin.dashboard')}
+                                            className="hover:text-[var(--accent)]"
+                                        >
+                                            Admin
+                                        </Link>
+                                    )}
+                                </>
                             ) : (
                                 <>
                                     <Link
@@ -81,12 +97,20 @@ export default function Welcome({ auth }: PageProps) {
                                     Dashboard
                                 </Link>
                             ) : (
-                                <Link
-                                    href={route('login')}
-                                    className="rounded-full bg-[var(--ink)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--paper)]"
-                                >
-                                    Connexion
-                                </Link>
+                                <>
+                                    <Link
+                                        href={route('login')}
+                                        className="rounded-full bg-[var(--ink)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--paper)]"
+                                    >
+                                        Connexion
+                                    </Link>
+                                    <Link
+                                        href={route('register')}
+                                        className="rounded-full border border-black/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em]"
+                                    >
+                                        Inscription
+                                    </Link>
+                                </>
                             )}
                         </div>
                     </header>

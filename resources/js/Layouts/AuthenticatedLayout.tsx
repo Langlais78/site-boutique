@@ -50,12 +50,14 @@ export default function Authenticated({
                             >
                                 Mon compte
                             </Link>
-                            <Link
-                                href={route('admin.dashboard')}
-                                className="hover:text-[var(--accent)]"
-                            >
-                                Admin
-                            </Link>
+                            {user?.is_admin && (
+                                <Link
+                                    href={route('admin.dashboard')}
+                                    className="hover:text-[var(--accent)]"
+                                >
+                                    Admin
+                                </Link>
+                            )}
                             <span className="h-5 w-px bg-black/20"></span>
                             <Link
                                 href={route('logout')}
@@ -93,7 +95,9 @@ export default function Authenticated({
                         <Link href={route('boutique')}>Boutique</Link>
                         <Link href={route('dashboard')}>Dashboard</Link>
                         <Link href={route('profile.edit')}>Mon compte</Link>
-                        <Link href={route('admin.dashboard')}>Admin</Link>
+                        {user?.is_admin && (
+                            <Link href={route('admin.dashboard')}>Admin</Link>
+                        )}
                         <Link
                             href={route('logout')}
                             method="post"
