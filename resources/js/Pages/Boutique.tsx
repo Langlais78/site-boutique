@@ -1,52 +1,17 @@
-import { PageProps } from '@/types';
-import { Head, Link } from '@inertiajs/react';
+import { PageProps, Product } from '@/types';
+import { Head, Link, router } from '@inertiajs/react';
 
-const products = [
-    {
-        name: 'Imprimante CoreXY Nova',
-        price: '899€',
-        label: 'Precision',
-        color: 'Noir carbone',
-        slug: 'corexy-nova',
-    },
-    {
-        name: 'Filament Pro Carbon',
-        price: '39€',
-        label: 'Technique',
-        color: 'Anthracite',
-        slug: 'filament-pro-carbon',
-    },
-    {
-        name: 'Clavier Mecha Flux',
-        price: '149€',
-        label: 'Gaming',
-        color: 'RGB cyan',
-        slug: 'clavier-mecha-flux',
-    },
-    {
-        name: 'Souris Vortex',
-        price: '79€',
-        label: 'eSport',
-        color: 'Mat',
-        slug: 'souris-vortex',
-    },
-    {
-        name: 'Kit Buses 0.2/0.4',
-        price: '24€',
-        label: 'Upgrade',
-        color: 'Titane',
-        slug: 'kit-buses',
-    },
-    {
-        name: 'Casque Pulse',
-        price: '129€',
-        label: 'Audio',
-        color: 'Noir',
-        slug: 'casque-pulse',
-    },
-];
+export default function Boutique({
+    auth,
+    cart,
+    products = [],
+}: PageProps<{ products?: Product[] }>) {
+    const formatPrice = (product: Product) =>
+        new Intl.NumberFormat('fr-FR', {
+            style: 'currency',
+            currency: product.currency || 'EUR',
+        }).format((product.price_cents || 0) / 100);
 
-export default function Boutique({ auth }: PageProps) {
     return (
         <>
             <Head title="Boutique" />
@@ -72,6 +37,19 @@ export default function Boutique({ auth }: PageProps) {
                             className="text-[var(--accent)]"
                         >
                             Boutique
+                        </Link>
+                        <Link
+                            href={route('cart.index')}
+                            className="text-[var(--muted)] hover:text-[var(--accent)]"
+                        >
+                            <span className="relative">
+                                Panier
+                                {(cart?.count ?? 0) > 0 && (
+                                    <span className="absolute -right-4 -top-3 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[var(--accent)] px-1 text-[9px] font-bold text-[var(--bg-0)]">
+                                        {cart?.count}
+                                    </span>
+                                )}
+                            </span>
                         </Link>
                         <span className="h-5 w-px bg-white/10"></span>
                         {auth.user ? (
@@ -121,6 +99,19 @@ export default function Boutique({ auth }: PageProps) {
                         >
                             Accueil
                         </Link>
+                        <Link
+                            href={route('cart.index')}
+                            className="rounded-full border border-white/15 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em]"
+                        >
+                            <span className="relative">
+                                Panier
+                                {(cart?.count ?? 0) > 0 && (
+                                    <span className="absolute -right-4 -top-3 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[var(--accent)] px-1 text-[9px] font-bold text-[var(--bg-0)]">
+                                        {cart?.count}
+                                    </span>
+                                )}
+                            </span>
+                        </Link>
                         {auth.user ? (
                             <Link
                                 href={route('dashboard')}
@@ -158,7 +149,7 @@ export default function Boutique({ auth }: PageProps) {
                         <div className="card-glow rounded-[28px] border border-white/10 bg-[var(--surface)] p-6">
                             <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">
                                 <span>Filtres rapides</span>
-                                <span>6 articles</span>
+                                <span>{products.length} articles</span>
                             </div>
                             <div className="mt-4 flex flex-wrap gap-3 text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--muted)]">
                                 {[
@@ -182,38 +173,53 @@ export default function Boutique({ auth }: PageProps) {
                         </div>
                     </div>
 
-                    <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {products.length === 0 ? (
+                        <div className="mt-12 card-glow rounded-[28px] border border-white/10 bg-[var(--surface)] p-6 text-sm text-[var(--muted)]">
+                            Aucun produit actif. Ajoutez vos premiers articles
+                            depuis l&apos;admin.
+                        </div>
+                    ) : (
+                        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         {products.map((product) => (
-                            <div
-                                key={product.name}
-                                className="card-glow rounded-[26px] border border-white/10 bg-[var(--surface)] p-6 transition hover:-translate-y-1"
-                            >
-                                <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--muted)]">
-                                    <span>{product.label}</span>
-                                    <span>{product.color}</span>
-                                </div>
-                                <Link
-                                    href={route('product.show', product.slug)}
-                                    className="mt-6 block h-36 rounded-2xl bg-[linear-gradient(135deg,rgba(38,244,208,0.18),rgba(255,138,61,0.2))]"
-                                ></Link>
-                                <Link
-                                    href={route('product.show', product.slug)}
-                                    className="mt-5 block text-lg font-semibold text-[var(--ink)] hover:text-[var(--accent)]"
+                                <div
+                                    key={product.id}
+                                    className="card-glow rounded-[26px] border border-white/10 bg-[var(--surface)] p-6 transition hover:-translate-y-1"
                                 >
-                                    {product.name}
-                                </Link>
-                                <div className="mt-2 flex items-center justify-between text-sm text-[var(--muted)]">
-                                    <span>{product.price}</span>
-                                    <button
-                                        type="button"
-                                        className="rounded-full border border-white/15 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                                    <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--muted)]">
+                                        <span>{product.badge ?? 'Tech'}</span>
+                                        <span>{product.color ?? 'Stock'}</span>
+                                    </div>
+                                    <Link
+                                        href={route('product.show', product.slug)}
+                                        className="mt-6 block h-36 rounded-2xl bg-[linear-gradient(135deg,rgba(38,244,208,0.18),rgba(255,138,61,0.2))]"
+                                    ></Link>
+                                    <Link
+                                        href={route('product.show', product.slug)}
+                                        className="mt-5 block text-lg font-semibold text-[var(--ink)] hover:text-[var(--accent)]"
                                     >
-                                        Ajouter
-                                    </button>
+                                        {product.name}
+                                    </Link>
+                                    <div className="mt-2 flex items-center justify-between text-sm text-[var(--muted)]">
+                                        <span>{formatPrice(product)}</span>
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                router.post(
+                                                    route(
+                                                        'cart.add',
+                                                        product.id,
+                                                    ),
+                                                )
+                                            }
+                                            className="rounded-full border border-white/15 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                                        >
+                                            Ajouter
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    )}
                 </main>
             </div>
         </>

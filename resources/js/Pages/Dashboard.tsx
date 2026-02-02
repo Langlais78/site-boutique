@@ -1,7 +1,26 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
+import { Order, PageProps } from '@/types';
 
-export default function Dashboard() {
+type DashboardProps = {
+    recentOrders: Order[];
+    stats: {
+        orders_count: number;
+        total_spent_cents: number;
+        currency: string;
+    };
+};
+
+export default function Dashboard({
+    recentOrders = [],
+    stats,
+}: PageProps<DashboardProps>) {
+    const formatCurrency = (cents: number) =>
+        new Intl.NumberFormat('fr-FR', {
+            style: 'currency',
+            currency: stats.currency || 'EUR',
+        }).format((cents || 0) / 100);
+
     return (
         <AuthenticatedLayout
             header={
@@ -22,41 +41,49 @@ export default function Dashboard() {
                     <div className="card-glow rounded-[28px] border border-white/10 bg-[var(--surface)] p-6">
                         <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">
                             <span>Commandes</span>
-                            <span>02 actives</span>
+                            <span>{stats.orders_count} total</span>
                         </div>
-                        <div className="mt-6 space-y-4">
-                            {[
-                                {
-                                    id: 'BS-4201',
-                                    status: 'Preparation',
-                                    date: '28 janv. 2026',
-                                },
-                                {
-                                    id: 'BS-4196',
-                                    status: 'En livraison',
-                                    date: '22 janv. 2026',
-                                },
-                            ].map((order) => (
-                                <div
-                                    key={order.id}
-                                    className="rounded-2xl border border-white/10 bg-[var(--surface-2)] px-5 py-4"
-                                >
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="text-base font-semibold text-[var(--ink)]">
-                                                {order.id}
-                                            </p>
-                                            <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--muted)]">
-                                                {order.status}
-                                            </p>
-                                        </div>
-                                        <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--muted)]">
-                                            {order.date}
+                        {recentOrders.length === 0 ? (
+                            <div className="mt-6 rounded-2xl border border-white/10 bg-[var(--surface-2)] px-5 py-4 text-sm text-[var(--muted)]">
+                                Aucune commande pour le moment.
+                            </div>
+                        ) : (
+                            <div className="mt-6 space-y-4">
+                                {recentOrders.map((order) => (
+                                    <div
+                                        key={order.id}
+                                        className="rounded-2xl border border-white/10 bg-[var(--surface-2)] px-5 py-4"
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <p className="text-base font-semibold text-[var(--ink)]">
+                                                    {order.number}
+                                                </p>
+                                                <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--muted)]">
+                                                    {order.status}
+                                                </p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--muted)]">
+                                                    {formatCurrency(
+                                                        order.total_cents,
+                                                    )}
+                                                </p>
+                                                <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--muted)]">
+                                                    {order.placed_at
+                                                        ? new Date(
+                                                              order.placed_at,
+                                                          ).toLocaleDateString(
+                                                              'fr-FR',
+                                                          )
+                                                        : ''}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     <div className="card-glow rounded-[28px] border border-white/10 bg-[var(--surface)] p-6">
@@ -66,10 +93,24 @@ export default function Dashboard() {
                         </div>
                         <div className="mt-5 grid gap-4 sm:grid-cols-2">
                             {[
-                                { label: 'Projets impression', value: '3' },
-                                { label: 'Presets gaming', value: '4' },
-                                { label: 'Favoris', value: '11' },
-                                { label: 'Alertes stock', value: '2' },
+                                {
+                                    label: 'Commandes',
+                                    value: stats.orders_count.toString(),
+                                },
+                                {
+                                    label: 'Total depense',
+                                    value: formatCurrency(
+                                        stats.total_spent_cents,
+                                    ),
+                                },
+                                {
+                                    label: 'Retours',
+                                    value: '0',
+                                },
+                                {
+                                    label: 'Tickets support',
+                                    value: '0',
+                                },
                             ].map((stat) => (
                                 <div
                                     key={stat.label}

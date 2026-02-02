@@ -1,36 +1,37 @@
 <?php
 
+use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminProductController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-    ]);
-});
+Route::get('/', [HomeController::class, 'index']);
 
-Route::get('/boutique', function () {
-    return Inertia::render('Boutique', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-    ]);
-})->name('boutique');
+Route::get('/boutique', [ProductController::class, 'index'])->name('boutique');
 
-Route::get('/produit/{slug}', function (string $slug) {
-    return Inertia::render('ProductShow', [
-        'slug' => $slug,
-    ]);
-})->name('product.show');
+Route::get('/produit/{product:slug}', [ProductController::class, 'show'])->name('product.show');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/panier', [CartController::class, 'index'])->name('cart.index');
+Route::post('/panier/ajouter/{product}', [CartController::class, 'add'])->name('cart.add');
+Route::patch('/panier/{product}', [CartController::class, 'update'])->name('cart.update');
+Route::delete('/panier/{product}', [CartController::class, 'remove'])->name('cart.remove');
+Route::delete('/panier', [CartController::class, 'clear'])->name('cart.clear');
 
-Route::get('/admin', function () {
-    return Inertia::render('AdminDashboard');
-})->middleware(['auth', 'verified', 'admin'])->name('admin.dashboard');
+Route::get('/dashboard', DashboardController::class)
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
+
+Route::prefix('admin')
+    ->middleware(['auth', 'verified', 'admin'])
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/', AdminDashboardController::class)->name('dashboard');
+        Route::resource('products', AdminProductController::class)->except(['show']);
+    });
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

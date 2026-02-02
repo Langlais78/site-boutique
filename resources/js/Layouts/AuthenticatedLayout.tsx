@@ -5,7 +5,9 @@ export default function Authenticated({
     header,
     children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
-    const user = usePage().props.auth.user;
+    const page = usePage();
+    const user = page.props.auth.user;
+    const cartCount = (page.props as { cart?: { count: number } }).cart?.count ?? 0;
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
@@ -38,6 +40,19 @@ export default function Authenticated({
                                 className="text-[var(--muted)] hover:text-[var(--accent)]"
                             >
                                 Boutique
+                            </Link>
+                            <Link
+                                href={route('cart.index')}
+                                className="text-[var(--muted)] hover:text-[var(--accent)]"
+                            >
+                                <span className="relative">
+                                    Panier
+                                    {(cartCount ?? 0) > 0 && (
+                                        <span className="absolute -right-4 -top-3 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[var(--accent)] px-1 text-[9px] font-bold text-[var(--bg-0)]">
+                                            {cartCount}
+                                        </span>
+                                    )}
+                                </span>
                             </Link>
                             <Link
                                 href={route('dashboard')}
@@ -100,6 +115,19 @@ export default function Authenticated({
                             className="hover:text-[var(--accent)]"
                         >
                             Boutique
+                        </Link>
+                        <Link
+                            href={route('cart.index')}
+                            className="hover:text-[var(--accent)]"
+                        >
+                            <span className="relative">
+                                Panier
+                                {(cartCount ?? 0) > 0 && (
+                                    <span className="absolute -right-4 -top-3 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[var(--accent)] px-1 text-[9px] font-bold text-[var(--bg-0)]">
+                                        {cartCount}
+                                    </span>
+                                )}
+                            </span>
                         </Link>
                         <Link
                             href={route('dashboard')}

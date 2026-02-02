@@ -1,7 +1,17 @@
-import { PageProps } from '@/types';
+import { PageProps, Product } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 
-export default function Welcome({ auth }: PageProps) {
+export default function Welcome({
+    auth,
+    cart,
+    featuredProducts = [],
+}: PageProps<{ featuredProducts?: Product[] }>) {
+    const formatPrice = (product: Product) =>
+        new Intl.NumberFormat('fr-FR', {
+            style: 'currency',
+            currency: product.currency || 'EUR',
+        }).format((product.price_cents || 0) / 100);
+
     return (
         <>
             <Head title="Barbu Shop" />
@@ -27,6 +37,19 @@ export default function Welcome({ auth }: PageProps) {
                             className="text-[var(--muted)] hover:text-[var(--accent)]"
                         >
                             Boutique
+                        </Link>
+                        <Link
+                            href={route('cart.index')}
+                            className="text-[var(--muted)] hover:text-[var(--accent)]"
+                        >
+                            <span className="relative">
+                                Panier
+                                {(cart?.count ?? 0) > 0 && (
+                                    <span className="absolute -right-4 -top-3 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[var(--accent)] px-1 text-[9px] font-bold text-[var(--bg-0)]">
+                                        {cart?.count}
+                                    </span>
+                                )}
+                            </span>
                         </Link>
                         <span className="h-5 w-px bg-white/10"></span>
                         {auth.user ? (
@@ -75,6 +98,19 @@ export default function Welcome({ auth }: PageProps) {
                             className="rounded-full border border-white/15 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em]"
                         >
                             Boutique
+                        </Link>
+                        <Link
+                            href={route('cart.index')}
+                            className="rounded-full border border-white/15 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em]"
+                        >
+                            <span className="relative">
+                                Panier
+                                {(cart?.count ?? 0) > 0 && (
+                                    <span className="absolute -right-4 -top-3 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[var(--accent)] px-1 text-[9px] font-bold text-[var(--bg-0)]">
+                                        {cart?.count}
+                                    </span>
+                                )}
+                            </span>
                         </Link>
                         {auth.user ? (
                             <Link
@@ -210,6 +246,59 @@ export default function Welcome({ auth }: PageProps) {
                             </div>
                         ))}
                     </div>
+                </section>
+
+                <section className="relative mx-auto w-full max-w-6xl px-6 pb-24">
+                    <div className="mb-8 flex items-center justify-between">
+                        <div>
+                            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[var(--muted)]">
+                                Derniers drops
+                            </p>
+                            <h2 className="mt-2 font-['Chakra_Petch'] text-3xl font-semibold">
+                                Nouveautes tech & gaming
+                            </h2>
+                        </div>
+                        <Link
+                            href={route('boutique')}
+                            className="rounded-full border border-white/15 px-5 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                        >
+                            Voir tout
+                        </Link>
+                    </div>
+
+                    {featuredProducts.length === 0 ? (
+                        <div className="card-glow rounded-[28px] border border-white/10 bg-[var(--surface)] p-6 text-sm text-[var(--muted)]">
+                            Aucun produit pour le moment. Ajoutez vos premiers
+                            articles depuis l&apos;admin.
+                        </div>
+                    ) : (
+                        <div className="grid gap-6 md:grid-cols-3">
+                            {featuredProducts.map((product) => (
+                                <div
+                                    key={product.id}
+                                    className="card-glow rounded-[26px] border border-white/10 bg-[var(--surface)] p-6"
+                                >
+                                    <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--muted)]">
+                                        <span>{product.badge ?? 'Drop'}</span>
+                                        <span>{product.color ?? 'Tech'}</span>
+                                    </div>
+                                    <Link
+                                        href={route('product.show', product.slug)}
+                                        className="mt-6 block h-28 rounded-2xl bg-[linear-gradient(135deg,rgba(38,244,208,0.18),rgba(255,138,61,0.2))]"
+                                    ></Link>
+                                    <Link
+                                        href={route('product.show', product.slug)}
+                                        className="mt-4 block text-lg font-semibold text-[var(--ink)] hover:text-[var(--accent)]"
+                                    >
+                                        {product.name}
+                                    </Link>
+                                    <p className="mt-2 text-sm text-[var(--muted)]">
+                                        {formatPrice(product)}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </section>
             </div>
         </>

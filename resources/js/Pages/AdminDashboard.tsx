@@ -1,7 +1,29 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
+import { Order, PageProps, Product } from '@/types';
 
-export default function AdminDashboard() {
+type AdminProps = {
+    stats: {
+        revenue_cents: number;
+        orders_count: number;
+        average_cents: number;
+        currency: string;
+    };
+    recentOrders: Order[];
+    lowStock: Product[];
+};
+
+export default function AdminDashboard({
+    stats,
+    recentOrders = [],
+    lowStock = [],
+}: PageProps<AdminProps>) {
+    const formatCurrency = (cents: number) =>
+        new Intl.NumberFormat('fr-FR', {
+            style: 'currency',
+            currency: stats.currency || 'EUR',
+        }).format((cents || 0) / 100);
+
     return (
         <AuthenticatedLayout
             header={
@@ -26,10 +48,19 @@ export default function AdminDashboard() {
                         </div>
                         <div className="mt-6 grid gap-4 sm:grid-cols-2">
                             {[
-                                { label: 'Chiffre d’affaires', value: '24 980€' },
-                                { label: 'Commandes', value: '182' },
-                                { label: 'Panier moyen', value: '137€' },
-                                { label: 'Tickets support', value: '8' },
+                                {
+                                    label: 'Chiffre d’affaires',
+                                    value: formatCurrency(stats.revenue_cents),
+                                },
+                                {
+                                    label: 'Commandes',
+                                    value: stats.orders_count.toString(),
+                                },
+                                {
+                                    label: 'Panier moyen',
+                                    value: formatCurrency(stats.average_cents),
+                                },
+                                { label: 'Tickets support', value: '0' },
                             ].map((stat) => (
                                 <div
                                     key={stat.label}
@@ -51,52 +82,41 @@ export default function AdminDashboard() {
                             <span>Commandes recentes</span>
                             <span>Live</span>
                         </div>
-                        <div className="mt-6 space-y-4">
-                            {[
-                                {
-                                    id: 'BS-4210',
-                                    customer: 'Lea Martin',
-                                    total: '238€',
-                                    status: 'Paiement confirme',
-                                },
-                                {
-                                    id: 'BS-4207',
-                                    customer: 'Rachid Benali',
-                                    total: '114€',
-                                    status: 'Preparation',
-                                },
-                                {
-                                    id: 'BS-4203',
-                                    customer: 'Alice Moro',
-                                    total: '312€',
-                                    status: 'Expedition',
-                                },
-                            ].map((order) => (
-                                <div
-                                    key={order.id}
-                                    className="rounded-2xl border border-white/10 bg-[var(--surface-2)] px-5 py-4"
-                                >
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="text-base font-semibold text-[var(--ink)]">
-                                                {order.id}
-                                            </p>
-                                            <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--muted)]">
-                                                {order.customer}
-                                            </p>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-sm font-semibold text-[var(--accent)]">
-                                                {order.total}
-                                            </p>
-                                            <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--muted)]">
-                                                {order.status}
-                                            </p>
+                        {recentOrders.length === 0 ? (
+                            <div className="mt-6 rounded-2xl border border-white/10 bg-[var(--surface-2)] px-5 py-4 text-sm text-[var(--muted)]">
+                                Aucune commande recente.
+                            </div>
+                        ) : (
+                            <div className="mt-6 space-y-4">
+                                {recentOrders.map((order) => (
+                                    <div
+                                        key={order.id}
+                                        className="rounded-2xl border border-white/10 bg-[var(--surface-2)] px-5 py-4"
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <p className="text-base font-semibold text-[var(--ink)]">
+                                                    {order.number}
+                                                </p>
+                                                <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--muted)]">
+                                                    {order.customer ?? 'Client'}
+                                                </p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-sm font-semibold text-[var(--accent)]">
+                                                    {formatCurrency(
+                                                        order.total_cents,
+                                                    )}
+                                                </p>
+                                                <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--muted)]">
+                                                    {order.status}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -104,26 +124,27 @@ export default function AdminDashboard() {
                     <div className="card-glow rounded-[28px] border border-white/10 bg-[var(--surface)] p-6">
                         <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">
                             <span>Stock critique</span>
-                            <span>5 items</span>
+                            <span>{lowStock.length} items</span>
                         </div>
-                        <div className="mt-5 space-y-3 text-sm text-[var(--muted)]">
-                            {[
-                                'CoreXY Nova - 4',
-                                'Filament Pro Carbon - 6',
-                                'Souris Vortex - 3',
-                                'Buses titane - 5',
-                            ].map((item) => (
-                                <div
-                                    key={item}
-                                    className="flex items-center justify-between rounded-2xl border border-white/10 bg-[var(--surface-2)] px-4 py-3"
-                                >
-                                    <span>{item}</span>
-                                    <span className="text-[10px] uppercase tracking-[0.22em] text-[var(--muted)]">
-                                        Reassort
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
+                        {lowStock.length === 0 ? (
+                            <div className="mt-5 rounded-2xl border border-white/10 bg-[var(--surface-2)] px-4 py-3 text-sm text-[var(--muted)]">
+                                Aucun stock critique.
+                            </div>
+                        ) : (
+                            <div className="mt-5 space-y-3 text-sm text-[var(--muted)]">
+                                {lowStock.map((item) => (
+                                    <div
+                                        key={item.id}
+                                        className="flex items-center justify-between rounded-2xl border border-white/10 bg-[var(--surface-2)] px-4 py-3"
+                                    >
+                                        <span>{item.name}</span>
+                                        <span className="text-[10px] uppercase tracking-[0.22em] text-[var(--muted)]">
+                                            {item.stock ?? 0}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     <div className="card-glow rounded-[28px] border border-white/10 bg-[var(--surface)] p-6">
@@ -132,25 +153,30 @@ export default function AdminDashboard() {
                             <span>Admin</span>
                         </div>
                         <div className="mt-5 flex flex-col gap-3">
-                            {[
-                                'Ajouter un produit',
-                                'Programmer un drop',
-                                'Configurer une promo',
-                            ].map((action) => (
-                                <button
-                                    key={action}
-                                    type="button"
-                                    className="rounded-full border border-white/15 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
-                                >
-                                    {action}
-                                </button>
-                            ))}
                             <Link
-                                href={route('boutique')}
-                                className="rounded-full bg-[linear-gradient(120deg,var(--accent),var(--accent-2))] px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--bg-0)]"
+                                href={route('admin.products.create')}
+                                className="rounded-full border border-white/15 px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
                             >
-                                Voir la boutique
+                                Ajouter un produit
                             </Link>
+                            <Link
+                                href={route('admin.products.index')}
+                                className="rounded-full border border-white/15 px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                            >
+                                Gérer les produits
+                            </Link>
+                            <button
+                                type="button"
+                                className="rounded-full border border-white/15 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                            >
+                                Programmer un drop
+                            </button>
+                            <button
+                                type="button"
+                                className="rounded-full border border-white/15 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                            >
+                                Configurer une promo
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -1,86 +1,15 @@
-import { PageProps } from '@/types';
-import { Head, Link } from '@inertiajs/react';
-
-type Product = {
-    name: string;
-    price: string;
-    label: string;
-    color: string;
-    description: string;
-    specs: string[];
-};
-
-const productsBySlug: Record<string, Product> = {
-    'corexy-nova': {
-        name: 'Imprimante CoreXY Nova',
-        price: '899€',
-        label: 'Precision',
-        color: 'Noir carbone',
-        description:
-            'Chassis rigide, vitesse rapide, calibration automatique. Parfaite pour les ateliers exigeants.',
-        specs: ['Volume 300x300', 'Auto-leveling', 'Chassis metal'],
-    },
-    'filament-pro-carbon': {
-        name: 'Filament Pro Carbon',
-        price: '39€',
-        label: 'Technique',
-        color: 'Anthracite',
-        description:
-            'Finition mate, haute resistance, ideal pour pieces fonctionnelles.',
-        specs: ['1.75mm', '220-240°C', 'Bobine 1kg'],
-    },
-    'clavier-mecha-flux': {
-        name: 'Clavier Mecha Flux',
-        price: '149€',
-        label: 'Gaming',
-        color: 'RGB cyan',
-        description:
-            'Switches tactiles, macros, chassis alu, ideal pour longues sessions.',
-        specs: ['Hot-swap', 'RGB', 'USB-C'],
-    },
-    'souris-vortex': {
-        name: 'Souris Vortex',
-        price: '79€',
-        label: 'eSport',
-        color: 'Mat',
-        description:
-            'Capteur precision, poids ajustable, glisse rapide.',
-        specs: ['26K DPI', '74g', 'Cable paracorde'],
-    },
-    'kit-buses': {
-        name: 'Kit Buses 0.2/0.4',
-        price: '24€',
-        label: 'Upgrade',
-        color: 'Titane',
-        description:
-            'Set pour details fins et vitesse. Compatible hotends standard.',
-        specs: ['0.2mm', '0.4mm', 'Alliage titane'],
-    },
-    'casque-pulse': {
-        name: 'Casque Pulse',
-        price: '129€',
-        label: 'Audio',
-        color: 'Noir',
-        description:
-            'Son immersif, micro detente, confort pro.',
-        specs: ['7.1', 'Micro cardioide', 'Coussin memoire'],
-    },
-};
+import { PageProps, Product } from '@/types';
+import { Head, Link, router } from '@inertiajs/react';
 
 export default function ProductShow({
     auth,
-    slug,
-}: PageProps<{ slug: string }>) {
-    const product =
-        productsBySlug[slug] || {
-            name: 'Produit',
-            price: '—',
-            label: 'Collection',
-            color: 'Neutre',
-            description:
-                'Produit indisponible pour le moment. Revenez plus tard.',
-            specs: ['—'],
-        };
+    cart,
+    product,
+}: PageProps<{ product: Product }>) {
+    const formatPrice = new Intl.NumberFormat('fr-FR', {
+        style: 'currency',
+        currency: product.currency || 'EUR',
+    }).format((product.price_cents || 0) / 100);
 
     return (
         <>
@@ -107,6 +36,19 @@ export default function ProductShow({
                             className="text-[var(--muted)] hover:text-[var(--accent)]"
                         >
                             Boutique
+                        </Link>
+                        <Link
+                            href={route('cart.index')}
+                            className="text-[var(--muted)] hover:text-[var(--accent)]"
+                        >
+                            <span className="relative">
+                                Panier
+                                {(cart?.count ?? 0) > 0 && (
+                                    <span className="absolute -right-4 -top-3 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[var(--accent)] px-1 text-[9px] font-bold text-[var(--bg-0)]">
+                                        {cart?.count}
+                                    </span>
+                                )}
+                            </span>
                         </Link>
                         <span className="h-5 w-px bg-white/10"></span>
                         {auth.user ? (
@@ -156,6 +98,19 @@ export default function ProductShow({
                         >
                             Boutique
                         </Link>
+                        <Link
+                            href={route('cart.index')}
+                            className="rounded-full border border-white/15 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em]"
+                        >
+                            <span className="relative">
+                                Panier
+                                {(cart?.count ?? 0) > 0 && (
+                                    <span className="absolute -right-4 -top-3 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[var(--accent)] px-1 text-[9px] font-bold text-[var(--bg-0)]">
+                                        {cart?.count}
+                                    </span>
+                                )}
+                            </span>
+                        </Link>
                         {auth.user ? (
                             <Link
                                 href={route('dashboard')}
@@ -179,8 +134,8 @@ export default function ProductShow({
                         <div className="space-y-6">
                             <div className="card-glow rounded-[28px] border border-white/10 bg-[var(--surface)] p-6">
                                 <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">
-                                    <span>{product.label}</span>
-                                    <span>{product.color}</span>
+                                    <span>{product.badge ?? 'Tech'}</span>
+                                    <span>{product.color ?? 'Stock'}</span>
                                 </div>
                                 <div className="mt-6 h-72 rounded-3xl bg-[linear-gradient(135deg,rgba(38,244,208,0.2),rgba(255,138,61,0.2))]"></div>
                                 <div className="mt-4 grid grid-cols-3 gap-3">
@@ -205,17 +160,17 @@ export default function ProductShow({
                                     {product.name}
                                 </h1>
                                 <p className="text-sm text-[var(--muted)]">
-                                    {product.description}
+                                    {product.description ?? product.summary}
                                 </p>
                             </div>
 
                             <div className="card-glow rounded-[28px] border border-white/10 bg-[var(--surface)] p-6">
                                 <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">
                                     <span>Prix</span>
-                                    <span>{product.price}</span>
+                                    <span>{formatPrice}</span>
                                 </div>
                                 <div className="mt-5 flex flex-wrap gap-3 text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--muted)]">
-                                    {product.specs.map((spec) => (
+                                    {(product.specs ?? ['—']).map((spec) => (
                                         <span
                                             key={spec}
                                             className="rounded-full border border-white/10 px-4 py-2"
@@ -227,6 +182,11 @@ export default function ProductShow({
                                 <div className="mt-6 flex flex-wrap gap-3">
                                     <button
                                         type="button"
+                                        onClick={() =>
+                                            router.post(
+                                                route('cart.add', product.id),
+                                            )
+                                        }
                                         className="rounded-full bg-[linear-gradient(120deg,var(--accent),var(--accent-2))] px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--bg-0)]"
                                     >
                                         Ajouter au panier
