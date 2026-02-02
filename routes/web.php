@@ -3,8 +3,11 @@
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminCategoryController;
 use App\Http\Controllers\AdminProductController;
+use App\Http\Controllers\AdminAccessoryController;
+use App\Http\Controllers\AdminCustomArcadeController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CustomArcadeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
@@ -19,6 +22,8 @@ Route::get('/contact', function () {
     return Inertia::render('Contact');
 })->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+Route::get('/borne-sur-mesure', CustomArcadeController::class)
+    ->name('custom.arcade');
 Route::get('/cgv', function () {
     return Inertia::render('LegalCgv');
 })->name('legal.cgv');
@@ -45,6 +50,8 @@ Route::prefix('admin')
         Route::get('/', AdminDashboardController::class)->name('dashboard');
         Route::post('categories', [AdminCategoryController::class, 'store'])
             ->name('categories.store');
+        Route::resource('accessories', AdminAccessoryController::class)->except(['show']);
+        Route::resource('custom-arcades', AdminCustomArcadeController::class)->except(['show']);
         Route::resource('products', AdminProductController::class)->except(['show']);
         Route::match(['post'], 'products/{product}', [AdminProductController::class, 'update'])
             ->name('products.update.post');

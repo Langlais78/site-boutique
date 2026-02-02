@@ -1,13 +1,24 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm, usePage } from '@inertiajs/react';
 
+function getQueryParam(url: string, key: string): string {
+    const queryIndex = url.indexOf('?');
+    if (queryIndex === -1) return '';
+    const params = new URLSearchParams(url.slice(queryIndex));
+    return params.get(key) ?? '';
+}
+
 export default function Contact() {
-    const { flash } = usePage().props as { flash?: { success?: string } };
+    const page = usePage();
+    const prefillSubject = getQueryParam(page.url, 'subject');
+    const prefillMessage = getQueryParam(page.url, 'message');
+
+    const { flash } = page.props as { flash?: { success?: string } };
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         email: '',
-        subject: '',
-        message: '',
+        subject: prefillSubject,
+        message: prefillMessage,
     });
 
     const submit = (event: React.FormEvent) => {

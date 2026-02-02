@@ -23,7 +23,7 @@ export default function Authenticated({
             <div className="absolute inset-0 bg-grid opacity-60"></div>
             <nav className="relative border-b border-white/10 bg-[rgba(11,15,20,0.7)] backdrop-blur">
                 <div className="px-4 sm:px-6 lg:px-10">
-                    <div className="flex h-16 items-center justify-between">
+                    <div className="relative flex h-16 items-center justify-between">
                         <Link
                             href="/"
                             className="flex items-center gap-3 font-['Chakra_Petch'] text-sm font-semibold uppercase tracking-[0.3em]"
@@ -38,7 +38,7 @@ export default function Authenticated({
                             Barbu Studio
                         </Link>
 
-                        <div className="hidden items-center gap-6 text-xs font-semibold uppercase tracking-[0.22em] lg:flex">
+                        <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-6 text-xs font-semibold uppercase tracking-[0.22em] lg:flex">
                             <Link
                                 href="/"
                                 className={
@@ -69,37 +69,9 @@ export default function Authenticated({
                             >
                                 Contact
                             </Link>
-                            {user ? (
-                                <>
-                                    <Link
-                                        href={route('profile.edit')}
-                                        className={
-                                            (page.url.startsWith('/profile')
-                                                || page.url.startsWith('/dashboard'))
-                                                ? 'text-[var(--accent)]'
-                                                : 'text-[var(--muted)] hover:text-[var(--accent)]'
-                                        }
-                                    >
-                                        Mon compte
-                                    </Link>
-                                </>
-                            ) : (
-                                <>
-                                    <Link
-                                        href={route('login')}
-                                        className="text-[var(--muted)] hover:text-[var(--accent)]"
-                                    >
-                                        Connexion
-                                    </Link>
-                                    <Link
-                                        href={route('register')}
-                                        className="rounded-full bg-[linear-gradient(120deg,var(--accent),var(--accent-2))] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--bg-0)]"
-                                    >
-                                        Inscription
-                                    </Link>
-                                </>
-                            )}
-                            <span className="h-5 w-px bg-white/10"></span>
+                        </div>
+
+                        <div className="hidden items-center gap-4 text-xs font-semibold uppercase tracking-[0.22em] lg:flex">
                             <Link
                                 href={route('cart.index')}
                                 className={
@@ -132,17 +104,92 @@ export default function Authenticated({
                                     )}
                                 </span>
                             </Link>
-                            {user?.is_admin && (
+                            {user ? (
+                                <>
+                                    {user.is_admin && (
+                                        <Link
+                                            href={route('admin.dashboard')}
+                                            className={
+                                                'inline-flex items-center justify-center ' +
+                                                (page.url.startsWith('/admin')
+                                                    ? 'text-[var(--accent)]'
+                                                    : 'text-[var(--muted)] hover:text-[var(--accent)]')
+                                            }
+                                            aria-label="Admin"
+                                            title="Admin"
+                                        >
+                                            <svg
+                                                aria-hidden="true"
+                                                className="h-4 w-4"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            >
+                                                <path d="M7.5 10.5a4.5 4.5 0 1 1 7 3.7l-1.6 1.1v2.2H9.6v-2.2l-1.6-1.1" />
+                                                <path d="M5 10.5h2.2" />
+                                                <path d="M16.8 10.5H19" />
+                                                <path d="M12 3v2.2" />
+                                            </svg>
+                                        </Link>
+                                    )}
+                                    <Link
+                                        href={route('profile.edit')}
+                                        className={
+                                            'inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 ' +
+                                            ((page.url.startsWith('/profile') || page.url.startsWith('/dashboard'))
+                                                ? 'text-[var(--accent)]'
+                                                : 'text-[var(--muted)] hover:text-[var(--accent)]')
+                                        }
+                                        aria-label="Connexion"
+                                        title="Connexion"
+                                    >
+                                        <svg
+                                            aria-hidden="true"
+                                            className="h-4 w-4"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        >
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                            <circle cx="12" cy="7" r="4" />
+                                        </svg>
+                                    </Link>
+                                    <Link
+                                        href={route('logout')}
+                                        method="post"
+                                        as="button"
+                                        className="inline-flex items-center justify-center rounded-full border border-white/15 px-3 py-2 text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                                        aria-label="Deconnexion"
+                                        title="Deconnexion"
+                                    >
+                                        <svg
+                                            aria-hidden="true"
+                                            className="h-4 w-4"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        >
+                                            <path d="M15 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8" />
+                                            <path d="M10 12h9" />
+                                            <path d="m16 8 4 4-4 4" />
+                                        </svg>
+                                    </Link>
+                                </>
+                            ) : (
                                 <Link
-                                    href={route('admin.dashboard')}
-                                    className={
-                                        'inline-flex items-center justify-center ' +
-                                        (page.url.startsWith('/admin')
-                                            ? 'text-[var(--accent)]'
-                                            : 'text-[var(--muted)] hover:text-[var(--accent)]')
-                                    }
-                                    aria-label="Admin"
-                                    title="Admin"
+                                    href={route('login')}
+                                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-[var(--muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                                    aria-label="Connexion"
+                                    title="Connexion"
                                 >
                                     <svg
                                         aria-hidden="true"
@@ -154,36 +201,17 @@ export default function Authenticated({
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
                                     >
-                                        <path d="M7.5 10.5a4.5 4.5 0 1 1 7 3.7l-1.6 1.1v2.2H9.6v-2.2l-1.6-1.1" />
-                                        <path d="M5 10.5h2.2" />
-                                        <path d="M16.8 10.5H19" />
-                                        <path d="M12 3v2.2" />
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                        <circle cx="12" cy="7" r="4" />
                                     </svg>
                                 </Link>
                             )}
-                            {user && (
+                            {!user && (
                                 <Link
-                                    href={route('logout')}
-                                    method="post"
-                                    as="button"
-                                    className="inline-flex items-center justify-center rounded-full border border-white/15 px-3 py-2 text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
-                                    aria-label="Deconnexion"
-                                    title="Deconnexion"
+                                    href={route('register')}
+                                    className="rounded-full bg-[linear-gradient(120deg,var(--accent),var(--accent-2))] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--bg-0)]"
                                 >
-                                    <svg
-                                        aria-hidden="true"
-                                        className="h-4 w-4"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    >
-                                        <path d="M15 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8" />
-                                        <path d="M10 12h9" />
-                                        <path d="m16 8 4 4-4 4" />
-                                    </svg>
+                                    Inscription
                                 </Link>
                             )}
                         </div>

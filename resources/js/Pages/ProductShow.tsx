@@ -1,13 +1,15 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { PageProps, Product } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function ProductShow({
     product,
 }: PageProps<{ product: Product }>) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [activeImage, setActiveImage] = useState<string | null>(null);
+    const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
+    const [isZooming, setIsZooming] = useState(false);
 
     const title = product.name || 'Produit tech';
     const badge = product.badge || 'Tech';
@@ -50,6 +52,11 @@ export default function ProductShow({
     const mainImage = product.image || '';
     const gallery = (product.images ?? []).filter((value) => Boolean(value)) as string[];
     const allImages = [mainImage, ...gallery].filter(Boolean) as string[];
+
+    useEffect(() => {
+        setActiveImage(allImages[0] ?? null);
+    }, [mainImage]);
+
     const activeIndex = activeImage
         ? Math.max(0, allImages.indexOf(activeImage))
         : 0;
@@ -95,25 +102,55 @@ export default function ProductShow({
                         </p>
                     </div>
 
-                    <div className="grid gap-8 lg:grid-cols-[1.1fr_1.2fr_0.8fr] lg:items-start">
-                        <div className="space-y-4">
-                            <div className="card-glow rounded-[24px] border border-white/10 bg-[var(--surface)] p-4">
+                    <div className="grid gap-8 lg:grid-cols-[1.1fr_1.2fr_0.8fr] lg:items-stretch">
+                        <div className="flex h-full flex-col gap-6">
+                            <div className="card-glow h-full rounded-[24px] border border-white/10 bg-[var(--surface)] p-4">
                                 <button
                                     type="button"
                                     onClick={() => {
-                                        if (mainImage) {
-                                            setActiveImage(mainImage);
+                                        if (activeImage) {
                                             setIsModalOpen(true);
                                         }
                                     }}
-                                    className="block h-[420px] w-full overflow-hidden rounded-2xl border border-white/10 bg-[var(--surface-2)]"
+                                    onMouseMove={(event) => {
+                                        const rect = event.currentTarget.getBoundingClientRect();
+                                        const x = ((event.clientX - rect.left) / rect.width) * 100;
+                                        const y = ((event.clientY - rect.top) / rect.height) * 100;
+                                        setZoomPosition({
+                                            x: Math.max(0, Math.min(100, x)),
+                                            y: Math.max(0, Math.min(100, y)),
+                                        });
+                                    }}
+                                    onMouseEnter={() => setIsZooming(true)}
+                                    onMouseLeave={() => setIsZooming(false)}
+                                    className="relative block h-[420px] w-full cursor-zoom-in overflow-hidden rounded-2xl border border-white/10 bg-[var(--surface-2)]"
                                 >
-                                    {mainImage ? (
-                                        <img
-                                            src={mainImage}
-                                            alt={title}
-                                            className="h-full w-full object-cover"
-                                        />
+                                    {activeImage ? (
+                                        <>
+                                            <img
+                                                src={activeImage}
+                                                alt={title}
+                                                className={
+                                                    (isZooming
+                                                        ? 'opacity-0'
+                                                        : 'opacity-100') +
+                                                    ' h-full w-full object-cover transition-opacity'
+                                                }
+                                            />
+                                            <div
+                                                className={
+                                                    (isZooming
+                                                        ? 'opacity-100'
+                                                        : 'opacity-0') +
+                                                    ' absolute inset-0 bg-no-repeat transition-opacity'
+                                                }
+                                                style={{
+                                                    backgroundImage: `url(${activeImage})`,
+                                                    backgroundSize: '200%',
+                                                    backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                                                }}
+                                            />
+                                        </>
                                     ) : (
                                         <div className="h-full w-full bg-[linear-gradient(135deg,rgba(38,244,208,0.2),rgba(255,138,61,0.2))]" />
                                     )}
@@ -124,11 +161,12 @@ export default function ProductShow({
                                               <button
                                                   key={url}
                                                   type="button"
-                                                  onClick={() => {
-                                                      setActiveImage(url);
-                                                      setIsModalOpen(true);
-                                                  }}
-                                                  className="h-16 overflow-hidden rounded-xl border border-white/10 bg-[var(--surface-2)]"
+                                                  onClick={() => setActiveImage(url)}
+                                                  className={`h-16 overflow-hidden rounded-xl border ${
+                                                      activeImage === url
+                                                          ? 'border-[var(--accent)]'
+                                                          : 'border-white/10'
+                                                  } bg-[var(--surface-2)]`}
                                               >
                                                   <img
                                                       src={url}
@@ -148,13 +186,13 @@ export default function ProductShow({
                                           )}
                                 </div>
                                 <p className="mt-3 text-xs text-[var(--muted)]">
-                                    Survolez ou cliquez pour zoomer
+                                    Survolez pour zoomer, cliquez pour agrandir.
                                 </p>
                             </div>
                         </div>
 
-                        <div className="space-y-6">
-                            <div className="card-glow rounded-[24px] border border-white/10 bg-[var(--surface)] p-6">
+                        <div className="flex h-full flex-col gap-6">
+                            <div className="card-glow flex-1 rounded-[24px] border border-white/10 bg-[var(--surface)] p-6">
                                 <div className="flex items-baseline justify-between">
                                     <div>
                                         <p className="text-xs uppercase tracking-[0.25em] text-[var(--muted)]">
@@ -187,26 +225,9 @@ export default function ProductShow({
                                         <span className="text-[var(--ink)]">{category}</span>
                                     </div>
                                 </div>
-                                <div className="mt-6 flex flex-wrap gap-3">
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            router.post(route('cart.add', product.id))
-                                        }
-                                        className="rounded-full bg-[linear-gradient(120deg,var(--accent),var(--accent-2))] px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--bg-0)]"
-                                    >
-                                        Ajouter au panier
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="rounded-full border border-white/15 px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
-                                    >
-                                        Acheter maintenant
-                                    </button>
-                                </div>
                             </div>
 
-                            <div className="card-glow rounded-[24px] border border-white/10 bg-[var(--surface)] p-6">
+                            <div className="card-glow flex-1 rounded-[24px] border border-white/10 bg-[var(--surface)] p-6">
                                 <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">
                                     Points forts
                                 </p>
@@ -221,8 +242,8 @@ export default function ProductShow({
                             </div>
                         </div>
 
-                        <aside className="space-y-4">
-                            <div className="card-glow rounded-[24px] border border-white/10 bg-[var(--surface)] p-5">
+                        <aside className="flex h-full flex-col gap-6">
+                            <div className="card-glow flex-1 rounded-[24px] border border-white/10 bg-[var(--surface)] p-5">
                                 <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">
                                     Resume commande
                                 </p>
@@ -242,44 +263,49 @@ export default function ProductShow({
                                         <span className="text-[var(--ink)]">{stockLabel}</span>
                                     </div>
                                 </div>
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        router.post(route('cart.add', product.id))
-                                    }
-                                    className="mt-5 w-full rounded-full bg-[linear-gradient(120deg,var(--accent),var(--accent-2))] px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--bg-0)]"
-                                >
-                                    Ajouter au panier
-                                </button>
-                                <Link
-                                    href={route('boutique')}
-                                    className="mt-3 block w-full rounded-full border border-white/15 px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
-                                >
-                                    Continuer mes achats
-                                </Link>
+                                <div className="mt-5 grid gap-3">
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            router.post(route('cart.add', product.id))
+                                        }
+                                        className="neon-border w-full rounded-full border border-white/15 px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                                    >
+                                        Ajouter au panier
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            router.post(route('cart.add', product.id), {
+                                                onSuccess: () => router.visit(route('cart.index')),
+                                            })
+                                        }
+                                        className="w-full rounded-full bg-[linear-gradient(120deg,var(--accent),var(--accent-2))] px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--bg-0)]"
+                                    >
+                                        Achat express
+                                    </button>
+                                </div>
                                 <div className="mt-4 rounded-2xl border border-white/10 bg-[var(--surface-2)] px-4 py-3 text-xs text-[var(--muted)]">
                                     Paiement securise, livraison suivie et retours faciles.
                                 </div>
                             </div>
 
-                            <div className="card-glow rounded-[24px] border border-white/10 bg-[var(--surface)] p-5 text-sm text-[var(--muted)]">
+                            <div className="card-glow flex-1 rounded-[24px] border border-white/10 bg-[var(--surface)] p-5 text-sm text-[var(--muted)]">
                                 <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">
-                                    Infos produit
+                                    Paiement & services
                                 </p>
-                                <div className="mt-4 space-y-2">
+                                <div className="mt-4 space-y-3 text-sm text-[var(--muted)]">
                                     <div className="flex items-center justify-between">
-                                        <span>SKU</span>
-                                        <span className="text-[var(--ink)]">{sku}</span>
+                                        <span>Paiement securise</span>
+                                        <span className="text-[var(--ink)]">3D Secure</span>
                                     </div>
                                     <div className="flex items-center justify-between">
-                                        <span>Poids</span>
-                                        <span className="text-[var(--ink)]">{weight}</span>
+                                        <span>Livraison</span>
+                                        <span className="text-[var(--ink)]">48h - 72h</span>
                                     </div>
                                     <div className="flex items-center justify-between">
-                                        <span>Dimensions</span>
-                                        <span className="text-[var(--ink)]">
-                                            {dimensions}
-                                        </span>
+                                        <span>Retours</span>
+                                        <span className="text-[var(--ink)]">30 jours</span>
                                     </div>
                                 </div>
                             </div>
