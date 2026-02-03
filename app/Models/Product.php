@@ -34,6 +34,7 @@ class Product extends Model
         'dimensions',
         'is_active',
         'is_featured',
+        'is_personalizable',
     ];
 
     protected $casts = [
@@ -48,10 +49,16 @@ class Product extends Model
         'weight_grams' => 'integer',
         'is_active' => 'boolean',
         'is_featured' => 'boolean',
+        'is_personalizable' => 'boolean',
     ];
 
     public function categories()
     {
         return $this->belongsToMany(Category::class);
+    }
+
+    public function accessories()
+    {
+        return $this->belongsToMany(Accessory::class);
     }
 }

@@ -3,42 +3,36 @@
 namespace Database\Seeders;
 
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        $admin = User::updateOrCreate(
+        $admin = User::query()->firstOrCreate(
             ['email' => 'test@example.com'],
             [
                 'name' => 'Test User',
+                'password' => Hash::make('password'),
                 'is_admin' => true,
                 'email_verified_at' => now(),
-                'password' => 'password',
             ],
         );
+
+        User::factory(5)->create();
 
         $this->call([
             CategorySeeder::class,
             ProductSeeder::class,
             ArcadeCabinetSeeder::class,
             AccessorySeeder::class,
+            CustomLetterLightSeeder::class,
         ]);
-        $products = Product::query()->get();
 
+        $products = Product::query()->get();
         $orders = Order::factory(2)->for($admin)->create();
 
         foreach ($orders as $order) {
@@ -47,19 +41,17 @@ class DatabaseSeeder extends Seeder
 
             foreach ($items as $product) {
                 $quantity = random_int(1, 2);
-                $total += $product->price_cents * $quantity;
+                $total += ($product->price_cents ?? 0) * $quantity;
 
-                OrderItem::factory()->for($order)->create([
+                $order->items()->create([
                     'product_id' => $product->id,
-                    'product_name' => $product->name,
-                    'unit_price_cents' => $product->price_cents,
+                    'name' => $product->name,
+                    'price_cents' => $product->price_cents ?? 0,
                     'quantity' => $quantity,
-                    'total_cents' => $product->price_cents * $quantity,
                 ]);
             }
 
             $order->update([
-                'number' => 'BS-' . Str::padLeft((string) $order->id, 4, '0'),
                 'total_cents' => $total,
             ]);
         }

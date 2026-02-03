@@ -24,11 +24,39 @@ class CartController extends Controller
     {
         $quantity = (int) $request->input('quantity', 1);
         $quantity = max(1, $quantity);
+        $accessoryIds = $request->input('accessory_ids', []);
+        $accessoryIds = is_array($accessoryIds) ? $accessoryIds : [];
 
         $items = $this->getItemsMap($request);
+        $customText = (string) $request->input('custom_text', '');
+        $customColor = (string) $request->input('custom_color', '');
+        $customFont = (string) $request->input('custom_font', '');
+        if ($customText !== '') {
+            $customText = mb_substr($customText, 0, 18);
+        }
+        $selectedAccessories = $product->accessories()
+            ->with('type:id,name')
+            ->whereIn('accessories.id', $accessoryIds)
+            ->get(['accessories.id', 'accessories.name', 'accessories.price_cents', 'accessories.type_id']);
+        $accessoriesTotal = $selectedAccessories->sum('price_cents');
+        $textPrice = $customText !== '' ? (mb_strlen($customText) * 500) : 0;
+        $unitPrice = ($product->price_cents ?? 0) + (int) $accessoriesTotal + $textPrice;
 
         if (isset($items[$product->id])) {
             $items[$product->id]['quantity'] += $quantity;
+            $items[$product->id]['unit_price_cents'] = $unitPrice;
+            $items[$product->id]['accessories'] = $selectedAccessories->map(function ($accessory) {
+                return [
+                    'id' => $accessory->id,
+                    'name' => $accessory->name,
+                    'price_cents' => $accessory->price_cents,
+                    'type_id' => $accessory->type_id,
+                ];
+            })->values()->all();
+            $items[$product->id]['custom_text'] = $customText;
+            $items[$product->id]['custom_color'] = $customColor;
+            $items[$product->id]['custom_font'] = $customFont;
+            $items[$product->id]['custom_text_price_cents'] = $textPrice;
             $items[$product->id]['total_cents'] =
                 $items[$product->id]['quantity'] * $items[$product->id]['unit_price_cents'];
         } else {
@@ -36,10 +64,22 @@ class CartController extends Controller
                 'product_id' => $product->id,
                 'name' => $product->name,
                 'slug' => $product->slug,
-                'unit_price_cents' => $product->price_cents,
+                'unit_price_cents' => $unitPrice,
                 'currency' => $product->currency,
                 'quantity' => $quantity,
-                'total_cents' => $product->price_cents * $quantity,
+                'accessories' => $selectedAccessories->map(function ($accessory) {
+                    return [
+                        'id' => $accessory->id,
+                        'name' => $accessory->name,
+                        'price_cents' => $accessory->price_cents,
+                        'type_id' => $accessory->type_id,
+                    ];
+                })->values()->all(),
+                'custom_text' => $customText,
+                'custom_color' => $customColor,
+                'custom_font' => $customFont,
+                'custom_text_price_cents' => $textPrice,
+                'total_cents' => $unitPrice * $quantity,
             ];
         }
 

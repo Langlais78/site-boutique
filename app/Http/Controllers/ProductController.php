@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Accessory;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -44,6 +45,7 @@ class ProductController extends Controller
                 'images',
                 'stock',
                 'is_featured',
+                'is_personalizable',
             ]);
 
         $categories = Category::query()
@@ -66,6 +68,27 @@ class ProductController extends Controller
 
     public function show(Product $product): Response
     {
+        $categories = $product->categories()->get([
+            'categories.id',
+            'categories.name',
+            'categories.slug',
+        ]);
+
+        $accessories = $product->is_personalizable
+            ? $product->accessories()
+                ->with('type:id,name,slug')
+                ->orderBy('type_id')
+                ->orderBy('name')
+                ->get([
+                    'accessories.id',
+                    'accessories.type_id',
+                    'accessories.name',
+                    'accessories.image',
+                    'accessories.characteristics',
+                    'accessories.price_cents',
+                ])
+            : collect();
+
         return Inertia::render('ProductShow', [
             'product' => [
                 'id' => $product->id,
@@ -86,17 +109,15 @@ class ProductController extends Controller
                 'image' => $product->image,
                 'stock' => $product->stock,
                 'images' => $product->images ?? [],
-                'categories' => $product->categories()->get([
-                    'categories.id',
-                    'categories.name',
-                    'categories.slug',
-                ]),
+                'categories' => $categories,
                 'tags' => $product->tags ?? [],
                 'variants' => $product->variants ?? [],
                 'weight_grams' => $product->weight_grams,
                 'dimensions' => $product->dimensions ?? [],
                 'is_featured' => $product->is_featured,
+                'is_personalizable' => $product->is_personalizable,
             ],
+            'accessories' => $accessories,
         ]);
     }
 }

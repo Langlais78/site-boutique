@@ -76,6 +76,7 @@ class ProductFactory extends Factory
             ],
             'is_active' => true,
             'is_featured' => fake()->boolean(20),
+            'is_personalizable' => fake()->boolean(35),
         ];
     }
 }

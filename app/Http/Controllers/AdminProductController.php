@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AdminProductRequest;
 use App\Models\Category;
+use App\Models\Accessory;
+use App\Models\AccessoryType;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
@@ -32,6 +34,7 @@ class AdminProductController extends Controller
                 'stock',
                 'is_active',
                 'is_featured',
+                'is_personalizable',
                 'color',
                 'summary',
                 'short_description',
@@ -77,6 +80,7 @@ class AdminProductController extends Controller
                 'dimensions' => $product->dimensions ?? [],
                 'is_active' => $product->is_active,
                 'is_featured' => $product->is_featured,
+                'is_personalizable' => $product->is_personalizable,
                 'categories' => $product->categories,
             ],
         ]);
@@ -88,8 +92,16 @@ class AdminProductController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'slug']);
 
-        return Inertia::render('Admin/Products/Create', [
+        return Inertia::render('Admin/Products/Form', [
             'categories' => $categories,
+            'accessories' => Accessory::query()
+                ->with('type:id,name,slug')
+                ->orderBy('type_id')
+                ->orderBy('name')
+                ->get(['id', 'type_id', 'name', 'price_cents', 'image']),
+            'accessoryTypes' => AccessoryType::query()
+                ->orderBy('name')
+                ->get(['id', 'name', 'slug']),
         ]);
     }
 
@@ -99,6 +111,7 @@ class AdminProductController extends Controller
 
         $product = Product::create($data);
         $product->categories()->sync($request->input('categories', []));
+        $product->accessories()->sync($request->input('accessories', []));
 
         return redirect()->route('admin.products.index');
     }
@@ -109,7 +122,7 @@ class AdminProductController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'slug']);
 
-        return Inertia::render('Admin/Products/Edit', [
+        return Inertia::render('Admin/Products/Form', [
             'product' => [
                 'id' => $product->id,
                 'name' => $product->name,
@@ -137,9 +150,19 @@ class AdminProductController extends Controller
                 'dimensions' => $product->dimensions ?? [],
                 'is_active' => $product->is_active,
                 'is_featured' => $product->is_featured,
+                'is_personalizable' => $product->is_personalizable,
             ],
             'categories' => $categories,
             'selectedCategoryIds' => $product->categories()->pluck('categories.id')->all(),
+            'accessories' => Accessory::query()
+                ->with('type:id,name,slug')
+                ->orderBy('type_id')
+                ->orderBy('name')
+                ->get(['id', 'type_id', 'name', 'price_cents', 'image']),
+            'accessoryTypes' => AccessoryType::query()
+                ->orderBy('name')
+                ->get(['id', 'name', 'slug']),
+            'selectedAccessoryIds' => $product->accessories()->pluck('accessories.id')->all(),
         ]);
     }
 
@@ -149,6 +172,7 @@ class AdminProductController extends Controller
 
         $product->update($data);
         $product->categories()->sync($request->input('categories', []));
+        $product->accessories()->sync($request->input('accessories', []));
 
         return redirect()->route('admin.products.index');
     }
@@ -191,6 +215,7 @@ class AdminProductController extends Controller
                 'dimensions_unit' => $product->dimensions['unit'] ?? null,
                 'is_active' => $product->is_active,
                 'is_featured' => $product->is_featured,
+                'is_personalizable' => $product->is_personalizable,
             ];
 
             foreach ($defaults as $key => $value) {
@@ -261,6 +286,7 @@ class AdminProductController extends Controller
             'dimensions' => $dimensions,
             'is_active' => (bool) ($validated['is_active'] ?? false),
             'is_featured' => (bool) ($validated['is_featured'] ?? false),
+            'is_personalizable' => (bool) ($validated['is_personalizable'] ?? false),
         ];
     }
 

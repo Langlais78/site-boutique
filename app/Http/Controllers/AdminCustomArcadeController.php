@@ -64,12 +64,20 @@ class AdminCustomArcadeController extends Controller
     private function accessoriesByType(): array
     {
         $items = Accessory::query()
-            ->orderBy('type')
+            ->with('type:id,name,slug')
+            ->orderBy('type_id')
             ->orderBy('name')
-            ->get(['id', 'type', 'name']);
+            ->get(['id', 'type_id', 'name']);
 
-        return $items->groupBy('type')->map(function ($group) {
-            return $group->values();
+        return $items->groupBy(function ($item) {
+            return $item->type?->slug ?? 'autre';
+        })->map(function ($group) {
+            return $group->values()->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                ];
+            });
         })->toArray();
     }
 }

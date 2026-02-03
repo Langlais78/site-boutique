@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminCategoryController;
 use App\Http\Controllers\AdminProductController;
 use App\Http\Controllers\AdminAccessoryController;
+use App\Http\Controllers\AdminAccessoryTypeController;
 use App\Http\Controllers\AdminCustomArcadeController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ContactController;
@@ -50,11 +51,10 @@ Route::prefix('admin')
         Route::get('/', AdminDashboardController::class)->name('dashboard');
         Route::post('categories', [AdminCategoryController::class, 'store'])
             ->name('categories.store');
+        Route::resource('accessory-types', AdminAccessoryTypeController::class)->except(['show']);
         Route::resource('accessories', AdminAccessoryController::class)->except(['show']);
         Route::resource('custom-arcades', AdminCustomArcadeController::class)->except(['show']);
-        Route::get('products/{product}', [AdminProductController::class, 'show'])
-            ->name('products.show');
-        Route::resource('products', AdminProductController::class)->except(['show']);
+        Route::resource('products', AdminProductController::class);
         Route::match(['post'], 'products/{product}', [AdminProductController::class, 'update'])
             ->name('products.update.post');
     });

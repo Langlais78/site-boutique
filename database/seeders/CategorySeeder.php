@@ -12,15 +12,15 @@ class CategorySeeder extends Seeder
     {
         $names = [
             'Impression 3D',
-            'Gaming',
-            'PC & Peripheriques',
-            'Consoles & Accessoires',
-            'VR & AR',
-            'Robots & DIY',
-            'Objets connectes',
-            'Materiaux & Filaments',
-            'Streaming & Creation',
-            'Gaming Seats',
+            'Filaments & Resines',
+            'Pieces et Remplacement',
+            'Post-traitement',
+            'Upgrades Imprimantes',
+            'Borne Arcade',
+            'Panels & Controls',
+            'Electronique & IO',
+            'Decors & Stickers',
+            'Kits & Packs',
         ];
 
         foreach ($names as $name) {

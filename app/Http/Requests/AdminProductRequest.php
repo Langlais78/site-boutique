@@ -31,6 +31,8 @@ class AdminProductRequest extends FormRequest
             'category' => ['nullable', 'string', 'max:255'],
             'categories' => ['nullable', 'array'],
             'categories.*' => ['integer', 'exists:categories,id'],
+            'accessories' => ['nullable', 'array'],
+            'accessories.*' => ['integer', 'exists:accessories,id'],
             'brand' => ['nullable', 'string', 'max:255'],
             'image_file' => ['nullable', 'image', 'max:8192'],
             'images_files' => ['nullable', 'array'],
@@ -45,6 +47,7 @@ class AdminProductRequest extends FormRequest
             'dimensions_unit' => ['nullable', 'string', 'max:10'],
             'is_active' => ['nullable', 'boolean'],
             'is_featured' => ['nullable', 'boolean'],
+            'is_personalizable' => ['nullable', 'boolean'],
         ];
     }
 

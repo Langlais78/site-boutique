@@ -14,8 +14,9 @@ class AdminAccessoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type' => ['required', 'string', 'max:60'],
+            'type_id' => ['required', 'integer', 'exists:accessory_types,id'],
             'name' => ['required', 'string', 'max:120'],
+            'price' => ['nullable', 'numeric', 'min:0'],
             'image' => ['nullable', 'string', 'max:255'],
             'characteristics' => ['nullable', 'string'],
         ];
